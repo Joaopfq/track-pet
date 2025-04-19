@@ -1,0 +1,133 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String    @id @default(cuid())
+  name            String
+  email           String    @unique
+  phone           String?
+  profilePicture  String?
+  createdAt       DateTime  @default(now())
+
+  posts           Post[] 
+  comments        Comment[] 
+  sentMessages    Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  
+  notifications   Notification[] @relation("UserNotifications")
+  createdNotifications Notification[] @relation("NotificationsCreator")
+}
+
+model Post {
+  id          String    @id @default(cuid())
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+
+  type        PostType
+  status      PostStatus     @default(ACTIVE)
+  postedAt    DateTime       @default(now())
+
+  // Embedded pet info
+  petName     String?
+  species     Species
+  breed       String?
+  color       String?
+  gender      Gender?
+  ageApprox   String?
+  specialCharacteristics String[] // e.g., ["blue collar", "limping"]
+
+  description String
+  photos      String[]  // array of image URLs
+
+  locationLat Float
+  locationLng Float
+  city        String?
+  neighborhood String?
+  missingDate DateTime?
+
+  comments    Comment[]
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  message   String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String
+
+  @@index([userId, postId])
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  content   String
+  sentAt    DateTime @default(now())
+  seen      Boolean  @default(false)
+
+  sender    User     @relation("SentMessages", fields: [senderId], references: [id])
+  senderId  String
+
+  receiver  User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  receiverId String
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  type      NotificationType
+  content   String
+  createdAt DateTime @default(now())
+  read      Boolean  @default(false)
+
+  // Receiver
+  user      User     @relation("UserNotifications", fields: [userId], references: [id])
+  userId    String
+
+  // Creator (optional)
+  creator   User?    @relation("NotificationsCreator", fields: [creatorId], references: [id])
+  creatorId String?
+}
+
+enum PostType {
+  MISSING
+  FOUND
+  SIGHTING
+}
+
+enum PostStatus {
+  ACTIVE
+  RESOLVED
+}
+
+enum Species {
+  DOG
+  CAT
+  OTHER
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  UNKNOWN
+}
+
+enum NotificationType {
+  MESSAGE
+  STATUS_UPDATE
+  NEW_COMMENT
+}
