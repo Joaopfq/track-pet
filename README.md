@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🐾 TrackPet
 
-## Getting Started
+**TrackPet** is a social platform that helps reunite lost pets with their owners. Users can post about **lost** or **found** pets, share photos, and connect with others in their community to increase the chances of a safe return.
 
-First, run the development server:
+> 💡 Built with a modern fullstack stack focused on performance, usability, and developer experience.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Tech             | Description                                      |
+|------------------|--------------------------------------------------|
+| **Next.js**      | Fullstack React framework                        |
+| **React**        | Library for building user interfaces             |
+| **TypeScript**   | Strongly-typed JavaScript superset               |
+| **Tailwind CSS** | Utility-first CSS framework                      |
+| **shadcn/ui**    | Accessible and customizable UI components        |
+| **Clerk**        | Authentication and user management               |
+| **Neon**         | Serverless PostgreSQL database                   |
+| **PostgreSQL**   | Relational database                              |
+| **Prisma**       | Type-safe ORM for database access                |
+| **uploadthing**  | File upload service for handling pet photos      |
+| **Vercel**       | Deployment platform for frontend and backend     |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## ✨ Features
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 🐶 Post lost pets with detailed descriptions and photos  
+- 🐱 Post found pets to help locate their owners  
+- 📍 Browse and search nearby reports  
+- 👥 Authentication via Clerk  
+- 📸 Upload pet images with UploadThing  
+- 💬 Comment or message to help with pet recovery  
+- 🌙 Light/Dark mode support
