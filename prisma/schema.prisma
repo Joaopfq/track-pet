@@ -15,11 +15,14 @@ datasource db {
 
 model User {
   id              String    @id @default(cuid())
+  clerkId         String?   @unique
   name            String
+  username        String    @unique
   email           String    @unique
   phone           String?
-  profilePicture  String?
+  image           String?
   createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   posts           Post[] 
   comments        Comment[] 
