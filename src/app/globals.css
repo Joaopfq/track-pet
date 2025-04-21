@@ -11,9 +11,9 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 24 100% 66%; 
-    --card-foreground: 0 0% 100%;
+    --foreground: 24 100% 66%; 
+    --card: 0 0% 100%;
+    --card-foreground: 24 100% 66%; 
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
     --primary: 24 100% 66%; 
@@ -26,7 +26,7 @@
     --accent-foreground: 0 0% 9%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
+    --border: 24 100% 66%; 
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;
     --chart-1: 12 76% 61%;
@@ -41,7 +41,7 @@
     --background: 24 10% 10%;
     --foreground: 36 100% 88%;
     --card: 0 0% 0%;
-    --card-foreground: 36 100% 88%;
+    --card-foreground: 0 0% 100%; 
     --popover: 24 10% 12%;
     --popover-foreground: 36 100% 88%;
     --primary: 0 0% 0%; /* preto */
