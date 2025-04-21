@@ -67,7 +67,7 @@ const UnAuthenticatedSidebar = () => (
       </CardHeader>
       <CardContent>
         <p className="text-center mb-4">
-          Login to access your profile and connect with others.
+          Login to find your lost pet or help others find theirs.
         </p>
         <SignInButton mode="modal">
           <Button className="w-full" variant="outline">
@@ -75,7 +75,7 @@ const UnAuthenticatedSidebar = () => (
           </Button>
         </SignInButton>
         <SignUpButton mode="modal">
-          <Button className="w-full mt-2 text-primary bg-primary-foreground" variant="ghost">
+          <Button className="w-full mt-2 border text-primary bg-primary-foreground" variant="outline">
             Sign Up
           </Button>
         </SignUpButton>

@@ -52,7 +52,7 @@ async function DesktopNavbar() {
         </>
       ) : (
         <SignInButton mode="modal">
-          <Button variant="outline">Sign In</Button>
+          <Button className='border-background' variant="outline">Sign In</Button>
         </SignInButton>
       )}
     </div>
