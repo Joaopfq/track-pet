@@ -31,7 +31,7 @@ async function Sidebar() {
                 <AvatarImage src={user.image || "/avatar.png"} />
               </Avatar>
 
-              <div className="mt-4 space-y-1">
+              <div className="text-ring mt-4 space-y-1">
                 <h3 className="font-semibold">{user.name}</h3>
                 <p className="text-sm">{user.username}</p>
               </div>
@@ -41,7 +41,7 @@ async function Sidebar() {
 
             <div className="w-full">
               <Separator className="my-4" />
-              <div className="flex justify-center">
+              <div className="flex justify-center text-ring">
                 <div>
                   <p className="font-medium">{user._count.posts}</p>
                   <p className="text-xs">Posted Pets</p>
@@ -75,7 +75,7 @@ const UnAuthenticatedSidebar = () => (
           </Button>
         </SignInButton>
         <SignUpButton mode="modal">
-          <Button className="w-full mt-2 border text-primary bg-primary-foreground" variant="outline">
+          <Button className="w-full mt-2 text-primary bg-primary-foreground" variant="outline">
             Sign Up
           </Button>
         </SignUpButton>
