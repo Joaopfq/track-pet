@@ -5,8 +5,10 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import React, { useState } from 'react'
+import { Gender, PostType, Species } from '@prisma/client'
 
 function CreatePost() {
 
@@ -16,11 +18,12 @@ function CreatePost() {
   const back = () => setStep((prev) => prev - 1);
 
   const [postForm, setPostForm] = useState({
+    postType: PostType.MISSING,
     petName: "",
-    species: "",
+    species: Species.DOG,
     breed: "",
     color: "",
-    gender: "",
+    gender: Gender.UNKNOWN,
     ageApprox: "",
     description: "",
     missingDate: "",
@@ -48,7 +51,7 @@ function CreatePost() {
                 name="pet-name"
                 value={postForm.petName}
                 onChange={(e) => setPostForm({ ...postForm, petName: e.target.value })}
-                placeholder="Lost/Found pet name"
+                placeholder="Lost pet name"
               />
             </div>
             <div className="space-y-2">
@@ -85,16 +88,24 @@ function CreatePost() {
                 value={postForm.ageApprox}
                 onChange={(e) => setPostForm({ ...postForm, ageApprox: e.target.value })}
                 placeholder="Approximate age of the pet"
+                type='number'
               />
             </div>
             <div className="space-y-2">
               <Label>Gender</Label>
-              <Input
-                name="gender"
+              <Select 
+                onValueChange={(value) => setPostForm({ ...postForm, gender: value as Gender })}
                 value={postForm.gender}
-                onChange={(e) => setPostForm({ ...postForm, gender: e.target.value })}
-                placeholder="Pet gender"
-              />
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Pet Gender" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={Gender.MALE}>Male </SelectItem>
+                  <SelectItem value={Gender.FEMALE}>Female</SelectItem>
+                  <SelectItem value={Gender.UNKNOWN}>Unknown</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </>
           )}
