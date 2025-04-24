@@ -7,7 +7,6 @@ import { getUserByClerkId } from '@/actions/user';
 import Link from 'next/link';
 import { Avatar, AvatarImage } from './ui/avatar';
 import { Separator } from './ui/separator';
-import { LinkIcon, MapPinIcon } from 'lucide-react';
 
 async function Sidebar() {
   
@@ -52,6 +51,18 @@ async function Sidebar() {
           </div>
         </CardContent>
       </Card>
+      <div className="flex  justify-between mt-4">
+        <Link href="/create-post">
+          <Button variant="outline">
+            Report Lost Pet
+          </Button>
+        </Link>
+        <Link href="/create-post">
+          <Button variant="outline">
+            Report Found Pet
+          </Button>
+        </Link>
+      </div>
     </div>
   )
 }
