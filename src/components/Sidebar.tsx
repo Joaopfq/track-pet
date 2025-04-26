@@ -7,7 +7,6 @@ import { getUserByClerkId } from '@/actions/user';
 import Link from 'next/link';
 import { Avatar, AvatarImage } from './ui/avatar';
 import { Separator } from './ui/separator';
-import { LinkIcon, MapPinIcon } from 'lucide-react';
 
 async function Sidebar() {
   
@@ -31,20 +30,20 @@ async function Sidebar() {
                 <AvatarImage src={user.image || "/avatar.png"} />
               </Avatar>
 
-              <div className="mt-4 space-y-1">
+              <div className="text-ring mt-4 space-y-1">
                 <h3 className="font-semibold">{user.name}</h3>
-                <p className="text-sm text-muted-foreground">{user.username}</p>
+                <p className="text-sm">{user.username}</p>
               </div>
             </Link>
 
-            {user.phone && <p className="mt-3 text-sm text-muted-foreground">{user.phone}</p>}
+            {user.phone && <p className="mt-3 text-sm">{user.phone}</p>}
 
             <div className="w-full">
               <Separator className="my-4" />
-              <div className="flex justify-center">
+              <div className="flex justify-center text-ring">
                 <div>
                   <p className="font-medium">{user._count.posts}</p>
-                  <p className="text-xs text-muted-foreground">Posted Pets</p>
+                  <p className="text-xs">Posted Pets</p>
                 </div>
                 <Separator orientation="vertical" />
               </div>
@@ -52,6 +51,18 @@ async function Sidebar() {
           </div>
         </CardContent>
       </Card>
+      <div className="flex  justify-between mt-4">
+        <Link href={{pathname: "/create-post", query: { postType: "MISSING" } }}>
+          <Button variant="outline">
+            Report Lost Pet
+          </Button>
+        </Link>
+        <Link href={{pathname: "/create-post", query: { postType: "FOUND" } }}>
+          <Button variant="outline">
+            Report Found Pet
+          </Button>
+        </Link>
+      </div>
     </div>
   )
 }
@@ -63,11 +74,11 @@ const UnAuthenticatedSidebar = () => (
   <div className="sticky top-20">
     <Card>
       <CardHeader>
-        <CardTitle className="text-center text-xl font-semibold text-primary-foreground">Welcome Back!</CardTitle>
+        <CardTitle className="text-center text-xl font-semibold">Welcome Back!</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-center text-primary-foreground mb-4">
-          Login to access your profile and connect with others.
+        <p className="text-center mb-4">
+          Login to find your lost pet or help others find theirs.
         </p>
         <SignInButton mode="modal">
           <Button className="w-full" variant="outline">
@@ -75,7 +86,7 @@ const UnAuthenticatedSidebar = () => (
           </Button>
         </SignInButton>
         <SignUpButton mode="modal">
-          <Button className="w-full mt-2 text-primary bg-primary-foreground" variant="ghost">
+          <Button className="w-full mt-2 text-primary bg-primary-foreground" variant="outline">
             Sign Up
           </Button>
         </SignUpButton>

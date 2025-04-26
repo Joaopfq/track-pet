@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "leaflet/dist/leaflet.css";
 
 @layer utilities {
   .text-balance {
@@ -11,22 +12,22 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 24 100% 66%; 
-    --card-foreground: 0 0% 100%;
+    --foreground: 24 100% 66%; 
+    --card: 0 0% 100%;
+    --card-foreground: 24 100% 66%; 
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 24 100% 66%; 
+    --primary: 0 0% 0%; 
     --primary-foreground: 0 0% 100%;
     --secondary: 36 100% 85%; 
     --secondary-foreground: 24 100% 30%; 
-    --muted: 0 0% 96.1%;
+    --muted: 24 100% 66%;
     --muted-foreground: 0 0% 45.1%;
-    --accent: 24 100% 72%;
+    --accent: 0 0% 20%;
     --accent-foreground: 0 0% 9%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
+    --border: 0 0% 80%; 
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;
     --chart-1: 12 76% 61%;
@@ -38,17 +39,17 @@
   }
 
   .dark {
-    --background: 24 10% 10%;
-    --foreground: 36 100% 88%;
+    --background: 0 0% 0%; /* preto */
+    --foreground: 0 0% 100%;
     --card: 0 0% 0%;
-    --card-foreground: 36 100% 88%;
+    --card-foreground: 0 0% 100%; 
     --popover: 24 10% 12%;
     --popover-foreground: 36 100% 88%;
     --primary: 0 0% 0%; /* preto */
     --primary-foreground: 0 0% 100%; /* branco */
     --secondary: 36 100% 40%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 24 10% 18%;
+    --muted: 0 0% 20%;
     --muted-foreground: 36 30% 70%;
     --accent: 0 0% 20%; /* cinza escuro */
     --accent-foreground: 0 0% 100%;
@@ -56,7 +57,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 24 10% 25%;
     --input: 24 10% 25%;
-    --ring: 0 0% 0%;
+    --ring: 0 0% 100%;
     --chart-1: 24 100% 66%;
     --chart-2: 36 100% 70%;
     --chart-3: 43 74% 66%;

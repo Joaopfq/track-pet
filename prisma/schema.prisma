@@ -109,7 +109,6 @@ model Notification {
 enum PostType {
   MISSING
   FOUND
-  SIGHTING
 }
 
 enum PostStatus {

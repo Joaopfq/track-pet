@@ -2,8 +2,6 @@
 
 **TrackPet** is a social platform that helps reunite lost pets with their owners. Users can post about **lost** or **found** pets, share photos, and connect with others in their community to increase the chances of a safe return.
 
-> 💡 Built with a modern fullstack stack focused on performance, usability, and developer experience.
-
 ---
 
 ## 🚀 Tech Stack
