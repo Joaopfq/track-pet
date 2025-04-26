@@ -52,12 +52,12 @@ async function Sidebar() {
         </CardContent>
       </Card>
       <div className="flex  justify-between mt-4">
-        <Link href="/create-post">
+        <Link href={{pathname: "/create-post", query: { postType: "MISSING" } }}>
           <Button variant="outline">
             Report Lost Pet
           </Button>
         </Link>
-        <Link href="/create-post">
+        <Link href={{pathname: "/create-post", query: { postType: "FOUND" } }}>
           <Button variant="outline">
             Report Found Pet
           </Button>

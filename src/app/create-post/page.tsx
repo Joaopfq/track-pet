@@ -1,16 +1,24 @@
 "use client"
 
-import Map from '@/components/Map'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Gender, PostType, Species } from '@prisma/client'
+import dynamic from "next/dynamic";
+import { useRouter, useSearchParams } from "next/navigation";
+import { mapEnumToString, mapStringToEnum } from '@/lib/utils'
+
+const Map = dynamic(() => import("@/components/Map"), { ssr: false });
 
 function CreatePost() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const postType = searchParams.get("postType");
 
   const [step, setStep] = useState(1);
 
@@ -20,15 +28,31 @@ function CreatePost() {
   const [postForm, setPostForm] = useState({
     postType: PostType.MISSING,
     petName: "",
-    species: Species.DOG,
+    species: "OTHER",
     breed: "",
     color: "",
-    gender: Gender.UNKNOWN,
+    gender: "UNKNOWN",
     ageApprox: "",
     description: "",
-    missingDate: "",
+    date: "",
     photos: [],
+    location: {
+      lat: 0,
+      lng: 0
+    }
   });
+
+
+  const handleLocationSelect = (lat: number, lng: number) => {
+    setPostForm((prev) => ({
+      ...prev,
+      location: {
+        lat,
+        lng
+      }
+    }))
+
+  }
 
   return (
     <Card >
@@ -45,23 +69,37 @@ function CreatePost() {
           {step === 1 && (
 
           <>
-            <div className="space-y-2">
-              <Label>Pet name</Label>
-              <Input
-                name="pet-name"
-                value={postForm.petName}
-                onChange={(e) => setPostForm({ ...postForm, petName: e.target.value })}
-                placeholder="Lost pet name"
-              />
-            </div>
+            {postType === "MISSING" && (
+              <div className="space-y-2">
+                <Label>Pet name</Label>
+                <Input
+                  name="pet-name"
+                  value={postForm.petName}
+                  onChange={(e) => setPostForm({ ...postForm, petName: e.target.value })}
+                  placeholder="Lost pet name"
+                />
+              </div>
+            )}
             <div className="space-y-2">
               <Label>Species</Label>
-              <Input
-                name="species"
-                value={postForm.species}
-                onChange={(e) => setPostForm({ ...postForm, species: e.target.value })}
-                placeholder="Pet Species"
-              />
+              <Select
+                onValueChange={(value: string) =>
+                  setPostForm({
+                    ...postForm,
+                    species: mapStringToEnum(Species, value) || Species.OTHER,
+                  })
+                }
+                value={mapEnumToString(postForm.species)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Pet Species" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="DOG">Dog</SelectItem>
+                  <SelectItem value="CAT">Cat</SelectItem>
+                  <SelectItem value="OTHER">Other</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label>Breed</Label>
@@ -93,17 +131,22 @@ function CreatePost() {
             </div>
             <div className="space-y-2">
               <Label>Gender</Label>
-              <Select 
-                onValueChange={(value) => setPostForm({ ...postForm, gender: value as Gender })}
-                value={postForm.gender}
+              <Select
+                onValueChange={(value: string) =>
+                  setPostForm({
+                    ...postForm,
+                    gender: mapStringToEnum(Gender, value) || Gender.UNKNOWN,
+                  })
+                }
+                value={mapEnumToString(postForm.gender)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Pet Gender" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={Gender.MALE}>Male </SelectItem>
-                  <SelectItem value={Gender.FEMALE}>Female</SelectItem>
-                  <SelectItem value={Gender.UNKNOWN}>Unknown</SelectItem>
+                  <SelectItem value="MALE">Male</SelectItem>
+                  <SelectItem value="FEMALE">Female</SelectItem>
+                  <SelectItem value="UNKNOWN">Unknown</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -113,12 +156,16 @@ function CreatePost() {
           {step === 2 && (
             <>  
               <div className="space-y-2">
-                <Label>Missing Date</Label>
+                {postType === "FOUND" ? (
+                  <Label>When did you find the pet?</Label>
+                ) : (
+                  <Label>When did you lose the pet?</Label>
+                )}
                 <Input
                   name="date"
-                  value={postForm.missingDate}
-                  onChange={(e) => setPostForm({ ...postForm, missingDate: e.target.value })}
-                  placeholder="When did you lose the pet?"
+                  value={postForm.date}
+                  onChange={(e) => setPostForm({ ...postForm, date: e.target.value })}
+                  placeholder="Date of the incident"
                 />
               </div>
               <div className="space-y-2">
@@ -153,8 +200,8 @@ function CreatePost() {
           {step === 4 && (
             <>
               <div className="space-y-2">
-                <Label>Location</Label>
-                <Map />
+                <Label>Where the pet was last seen?</Label>
+                <Map onSelectAction={handleLocationSelect} />
               </div>
             </>
           )}
