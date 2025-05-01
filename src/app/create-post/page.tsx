@@ -11,6 +11,7 @@ import { Gender, PostType, Species } from '@prisma/client'
 import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import { mapEnumToString, mapStringToEnum } from '@/lib/utils'
+import ImageUpload from '@/components/ImageUpload'
 
 const Map = dynamic(() => import("@/components/Map"), { ssr: false });
 
@@ -35,13 +36,13 @@ function CreatePost() {
     ageApprox: "",
     description: "",
     date: "",
+    imageUrl: "",
     photos: [],
     location: {
       lat: 0,
       lng: 0
-    }
+    },
   });
-
 
   const handleLocationSelect = (lat: number, lng: number) => {
     setPostForm((prev) => ({
@@ -185,13 +186,13 @@ function CreatePost() {
           {step === 3 && (
             <>
               <div className="space-y-2">
-                <Label>Photos</Label>
-                <Input
-                  name="photos"
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  // onChange={ TODO }
+                <Label>Pet Photo </Label>
+                <ImageUpload 
+                  endpoint="postImage"
+                  value={postForm.imageUrl}
+                  onChange={(url) => {
+                    setPostForm({ ...postForm, imageUrl: url })
+                  }}                
                 />
               </div>
             </>
