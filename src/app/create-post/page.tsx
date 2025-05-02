@@ -6,17 +6,18 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Gender, PostType, Species } from '@prisma/client'
 import dynamic from "next/dynamic";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { mapEnumToString, mapStringToEnum } from '@/lib/utils'
 import ImageUpload from '@/components/ImageUpload'
+import { DatePicker } from '@/components/DatePicker'
+import { createPost } from '@/actions/post'
 
 const Map = dynamic(() => import("@/components/Map"), { ssr: false });
 
 function CreatePost() {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const postType = searchParams.get("postType");
@@ -26,8 +27,23 @@ function CreatePost() {
   const next = () => setStep((prev) => prev + 1);
   const back = () => setStep((prev) => prev - 1);
 
-  const [postForm, setPostForm] = useState({
-    postType: PostType.MISSING,
+  const [postForm, setPostForm] = useState<{
+    postType: PostType;
+    petName: string;
+    species: string;
+    breed: string;
+    color: string;
+    gender: string;
+    ageApprox: string;
+    description: string;
+    date: Date | undefined;
+    imageUrl: string;
+    location: {
+      lat: number;
+      lng: number;
+    };
+  }>({
+    postType: "MISSING",
     petName: "",
     species: "OTHER",
     breed: "",
@@ -35,12 +51,11 @@ function CreatePost() {
     gender: "UNKNOWN",
     ageApprox: "",
     description: "",
-    date: "",
+    date: undefined,
     imageUrl: "",
-    photos: [],
     location: {
       lat: 0,
-      lng: 0
+      lng: 0,
     },
   });
 
@@ -53,6 +68,54 @@ function CreatePost() {
       }
     }))
 
+  }
+
+  const handleSubmit = async () => {
+    try {
+      const result = await createPost(
+        postForm.postType,
+        "ACTIVE",
+        postForm.petName,
+        mapStringToEnum(Species, postForm.species) || Species.OTHER,
+        postForm.breed,
+        postForm.color,
+        mapStringToEnum(Gender, postForm.gender) || Gender.UNKNOWN,
+        postForm.ageApprox,
+        postForm.description,
+        postForm.imageUrl,
+        postForm.location.lat,
+        postForm.location.lng,
+        postForm.date ? postForm.date : null,
+      );
+
+      if(result?.sucess){
+        setPostForm({
+          postType: "MISSING",
+          petName: "",
+          species: "OTHER",
+          breed: "",
+          color: "",
+          gender: "UNKNOWN",
+          ageApprox: "",
+          description: "",
+          date: undefined,
+          imageUrl: "",
+          location: {
+            lat: 0,
+            lng: 0,
+          },
+        })
+
+        //toast.success("Post created sucessfully");
+        console.log("Post created sucessfully", result.post);
+      }
+
+    } catch (error) {
+      //toast.error("Fail to create post")
+      console.log("Failed to create post:", error);
+    } finally{
+      //setIsPosting(false)
+    }
   }
 
   return (
@@ -156,18 +219,16 @@ function CreatePost() {
 
           {step === 2 && (
             <>  
-              <div className="space-y-2">
+              <div className="flex flex-col gap-1 space-y-2">
                 {postType === "FOUND" ? (
                   <Label>When did you find the pet?</Label>
                 ) : (
                   <Label>When did you lose the pet?</Label>
                 )}
-                <Input
-                  name="date"
-                  value={postForm.date}
-                  onChange={(e) => setPostForm({ ...postForm, date: e.target.value })}
-                  placeholder="Date of the incident"
-                />
+                  <DatePicker
+                    value={postForm.date}
+                    onChangeAction={(date) => setPostForm({ ...postForm, date })}
+                  />
               </div>
               <div className="space-y-2">
                 <Label>Description</Label>
@@ -223,7 +284,12 @@ function CreatePost() {
           </div>
         )}
         {step === 4 && (
-          <Button className='w-32' variant="outline" type="submit">
+          <Button
+            className='w-32 bg-white text-black' 
+            variant="outline" 
+            type="submit"
+            onClick={handleSubmit}
+          >
             Post
           </Button>
         )}
