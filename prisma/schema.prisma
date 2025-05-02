@@ -52,7 +52,7 @@ model Post {
   specialCharacteristics String[] // e.g., ["blue collar", "limping"]
 
   description String
-  photos      String[]  // array of image URLs
+  photo       String
 
   locationLat Float
   locationLng Float
