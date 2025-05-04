@@ -12,3 +12,11 @@ export function mapEnumToString<T extends Record<string, string>>(enumValue: T[k
 export function mapStringToEnum<T extends Record<string, string>>(enumObj: T, value: string): T[keyof T] | undefined {
   return Object.values(enumObj).includes(value) ? (value as T[keyof T]) : undefined;
 }
+
+export function debounce<T extends (...args: any[]) => any>(func: T, wait: number) {
+  let timeout: ReturnType<typeof setTimeout>;
+  return (...args: Parameters<T>) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+}
