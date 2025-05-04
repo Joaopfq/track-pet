@@ -2,25 +2,22 @@
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
 import React, { useState } from 'react'
 import { Gender, PostType, Species } from '@prisma/client'
-import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import { mapEnumToString, mapStringToEnum } from '@/lib/utils'
-import ImageUpload from '@/components/ImageUpload'
-import { DatePicker } from '@/components/DatePicker'
+import { mapStringToEnum } from '@/lib/utils'
 import { createPost } from '@/actions/post'
-
-const Map = dynamic(() => import("@/components/Map"), { ssr: false });
+import Step4 from '@/components/formSteps/Step4'
+import Step3 from '@/components/formSteps/Step3'
+import Step2 from '@/components/formSteps/Step2'
+import Step1 from '@/components/formSteps/Step1'
 
 function CreatePost() {
   const searchParams = useSearchParams();
 
   const postType = searchParams.get("postType");
+  
+  console.log("postType", postType);
 
   const [step, setStep] = useState(1);
 
@@ -58,17 +55,7 @@ function CreatePost() {
       lng: 0,
     },
   });
-
-  const handleLocationSelect = (lat: number, lng: number) => {
-    setPostForm((prev) => ({
-      ...prev,
-      location: {
-        lat,
-        lng
-      }
-    }))
-
-  }
+  postForm.postType = postType as PostType;
 
   const handleSubmit = async () => {
     try {
@@ -130,144 +117,10 @@ function CreatePost() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {step === 1 && (
-
-          <>
-            {postType === "MISSING" && (
-              <div className="space-y-2">
-                <Label>Pet name</Label>
-                <Input
-                  name="pet-name"
-                  value={postForm.petName}
-                  onChange={(e) => setPostForm({ ...postForm, petName: e.target.value })}
-                  placeholder="Lost pet name"
-                />
-              </div>
-            )}
-            <div className="space-y-2">
-              <Label>Species</Label>
-              <Select
-                onValueChange={(value: string) =>
-                  setPostForm({
-                    ...postForm,
-                    species: mapStringToEnum(Species, value) || Species.OTHER,
-                  })
-                }
-                value={mapEnumToString(postForm.species)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Pet Species" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="DOG">Dog</SelectItem>
-                  <SelectItem value="CAT">Cat</SelectItem>
-                  <SelectItem value="OTHER">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Breed</Label>
-              <Input
-                name="breed"
-                value={postForm.breed}
-                onChange={(e) => setPostForm({ ...postForm, breed: e.target.value })}
-                placeholder="Pet breed"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Color</Label>
-              <Input
-                name="color"
-                value={postForm.color}
-                onChange={(e) => setPostForm({ ...postForm, color: e.target.value })}
-                placeholder="Pet color"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Age</Label>
-              <Input
-                name="age"
-                value={postForm.ageApprox}
-                onChange={(e) => setPostForm({ ...postForm, ageApprox: e.target.value })}
-                placeholder="Approximate age of the pet"
-                type='number'
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Gender</Label>
-              <Select
-                onValueChange={(value: string) =>
-                  setPostForm({
-                    ...postForm,
-                    gender: mapStringToEnum(Gender, value) || Gender.UNKNOWN,
-                  })
-                }
-                value={mapEnumToString(postForm.gender)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Pet Gender" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="MALE">Male</SelectItem>
-                  <SelectItem value="FEMALE">Female</SelectItem>
-                  <SelectItem value="UNKNOWN">Unknown</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </>
-          )}
-
-          {step === 2 && (
-            <>  
-              <div className="flex flex-col gap-1 space-y-2">
-                {postType === "FOUND" ? (
-                  <Label>When did you find the pet?</Label>
-                ) : (
-                  <Label>When did you lose the pet?</Label>
-                )}
-                  <DatePicker
-                    value={postForm.date}
-                    onChangeAction={(date) => setPostForm({ ...postForm, date })}
-                  />
-              </div>
-              <div className="space-y-2">
-                <Label>Description</Label>
-                <Textarea
-                  name="description"
-                  value={postForm.description}
-                  onChange={(e) => setPostForm({ ...postForm, description: e.target.value })}
-                  className="min-h-[100px]"
-                  placeholder="Any information about the pet"
-                />
-              </div>
-            </>
-            
-          )}
-
-          {step === 3 && (
-            <>
-              <div className="space-y-2">
-                <Label>Pet Photo </Label>
-                <ImageUpload 
-                  endpoint="postImage"
-                  value={postForm.imageUrl}
-                  onChange={(url) => {
-                    setPostForm({ ...postForm, imageUrl: url })
-                  }}                
-                />
-              </div>
-            </>
-          )}
-
-          {step === 4 && (
-            <>
-              <div className="space-y-2">
-                <Label>Where the pet was last seen?</Label>
-                <Map onSelectAction={handleLocationSelect} />
-              </div>
-            </>
-          )}
-
+          {step === 1 && <Step1 postForm={postForm} setPostForm={setPostForm} />}
+          {step === 2 && <Step2 postForm={postForm} setPostForm={setPostForm} />}
+          {step === 3 && <Step3 postForm={postForm} setPostForm={setPostForm} />}
+          {step === 4 && <Step4 postForm={postForm} setPostForm={setPostForm} />}
         </div>
       </CardContent>
       <CardFooter className='flex justify-between' >
@@ -285,7 +138,7 @@ function CreatePost() {
         )}
         {step === 4 && (
           <Button
-            className='w-32 bg-white text-black' 
+            className='w-32 bg-white text-black hover:bg-white/80 border border-black' 
             variant="outline" 
             type="submit"
             onClick={handleSubmit}
