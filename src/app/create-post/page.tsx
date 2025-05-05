@@ -7,17 +7,18 @@ import { Gender, PostType, Species } from '@prisma/client'
 import { useSearchParams } from "next/navigation";
 import { mapStringToEnum } from '@/lib/utils'
 import { createPost } from '@/actions/post'
+import toast from "react-hot-toast";
 import Step4 from '@/components/formSteps/Step4'
 import Step3 from '@/components/formSteps/Step3'
 import Step2 from '@/components/formSteps/Step2'
 import Step1 from '@/components/formSteps/Step1'
+import { z } from 'zod'
+import { combinedSchema } from '@/lib/validations/postSchemas'
 
 function CreatePost() {
   const searchParams = useSearchParams();
 
   const postType = searchParams.get("postType");
-  
-  console.log("postType", postType);
 
   const [step, setStep] = useState(1);
 
@@ -59,6 +60,10 @@ function CreatePost() {
 
   const handleSubmit = async () => {
     try {
+      // Validate the form data using the combined schema
+      combinedSchema.parse(postForm);
+  
+      // If validation passes, proceed to create the post
       const result = await createPost(
         postForm.postType,
         "ACTIVE",
@@ -72,10 +77,11 @@ function CreatePost() {
         postForm.imageUrl,
         postForm.location.lat,
         postForm.location.lng,
-        postForm.date ? postForm.date : null,
+        postForm.date ? postForm.date : null
       );
-
-      if(result?.sucess){
+  
+      if (result?.sucess) {
+        // Reset the form after successful post creation
         setPostForm({
           postType: "MISSING",
           petName: "",
@@ -91,19 +97,25 @@ function CreatePost() {
             lat: 0,
             lng: 0,
           },
-        })
-
-        //toast.success("Post created sucessfully");
-        console.log("Post created sucessfully", result.post);
+        });
+  
+        toast.success("Post created successfully");
+        console.log("Post created successfully", result.post);
       }
-
     } catch (error) {
-      //toast.error("Fail to create post")
-      console.log("Failed to create post:", error);
-    } finally{
-      //setIsPosting(false)
+      if (error instanceof z.ZodError) {
+        // Handle validation errors
+        console.log("Validation errors:", error.errors);
+        toast.error("Please fill out all required fields correctly.");
+      } else {
+        // Handle other errors
+        toast.error("Failed to create post");
+        console.log("Failed to create post:", error);
+      }
+    } finally {
+      // Handle any cleanup here (e.g., set loading state if applicable)
     }
-  }
+  };
 
   return (
     <Card >

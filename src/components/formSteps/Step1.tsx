@@ -10,12 +10,11 @@ import { z } from "zod";
 type Step1Fields = keyof z.infer<typeof step1Schema>;
 
 function Step1({ postForm, setPostForm }: { postForm: any; setPostForm: any }) {
-  const [errors, setErrors] = useState<Record<string, string>>({}); // To store validation errors
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Function to validate a single field dynamically
+
   const validateField = (name: Step1Fields, value: any) => {
     try {
-      // Dynamically create a schema for the single field
       z.object({ [name]: step1Schema.shape[name] }).parse({ [name]: value });
       setErrors((prev) => ({ ...prev, [name]: "" })); // Clear error if valid
     } catch (error) {
@@ -23,18 +22,16 @@ function Step1({ postForm, setPostForm }: { postForm: any; setPostForm: any }) {
         setErrors((prev) => ({
           ...prev,
           [name]: error.errors[0]?.message || "Invalid value",
-        })); // Set error message
+        }));
       }
     }
   };
 
-  // Debounced validation for better performance
-  const debouncedValidateField = useCallback(debounce(validateField, 300), []);
+  const debouncedValidateField = useCallback(debounce(validateField, 300), [validateField]);
 
-  // Handle input changes and validate the field
   const handleInputChange = (name: Step1Fields, value: any) => {
-    setPostForm((prev: any) => ({ ...prev, [name]: value })); // Update form state
-    debouncedValidateField(name, value); // Trigger debounced validation
+    setPostForm((prev: any) => ({ ...prev, [name]: value }));
+    debouncedValidateField(name, value);
   };
 
   return (
