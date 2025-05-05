@@ -7,6 +7,7 @@ import { Poppins } from "next/font/google";
 import { Roboto } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import Sidebar from "@/components/Sidebar";
+import { Toaster } from "react-hot-toast";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -56,6 +57,7 @@ export default function RootLayout({
                   </div>
                 </main>
             </div>
+            <Toaster />
           </ThemeProvider>
         </body>
       </html>
