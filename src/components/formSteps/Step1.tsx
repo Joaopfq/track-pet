@@ -6,28 +6,20 @@ import { Gender, Species } from "@prisma/client";
 import { debounce, mapEnumToString, mapStringToEnum } from "@/lib/utils";
 import { step1Schema } from "@/lib/validations/postSchemas";
 import { z } from "zod";
+import { validateField } from "@/lib/validations/post";
 
 type Step1Fields = keyof z.infer<typeof step1Schema>;
 
 function Step1({ postForm, setPostForm }: { postForm: any; setPostForm: any }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-
-  const validateField = (name: Step1Fields, value: any) => {
-    try {
-      z.object({ [name]: step1Schema.shape[name] }).parse({ [name]: value });
-      setErrors((prev) => ({ ...prev, [name]: "" })); // Clear error if valid
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        setErrors((prev) => ({
-          ...prev,
-          [name]: error.errors[0]?.message || "Invalid value",
-        }));
-      }
-    }
-  };
-
-  const debouncedValidateField = useCallback(debounce(validateField, 300), [validateField]);
+  const debouncedValidateField = useCallback(
+    debounce((name: Step1Fields, value: any) => {
+      const error = validateField(step1Schema, name, value);
+      setErrors((prev) => ({ ...prev, [name]: error || "" }));
+    }, 300),
+    []
+  );
 
   const handleInputChange = (name: Step1Fields, value: any) => {
     setPostForm((prev: any) => ({ ...prev, [name]: value }));

@@ -20,9 +20,12 @@ export const step3Schema = z.object({
 
 export const step4Schema = z.object({
   location: z.object({
-    lat: z.number().min(-90).max(90),
-    lng: z.number().min(-180).max(180),
-  }),
+    lat: z.number().min(-90).max(90, "Latitude must be between -90 and 90"),
+    lng: z.number().min(-180).max(180, "Longitude must be between -180 and 180"),
+  }).refine(
+    (loc) => loc.lat !== 0 && loc.lng !== 0,
+    { message: "Location is required" }
+  ),
 });
 
 export const combinedSchema = step1Schema
