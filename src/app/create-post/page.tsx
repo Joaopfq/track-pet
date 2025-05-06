@@ -60,10 +60,8 @@ function CreatePost() {
 
   const handleSubmit = async () => {
     try {
-      // Validate the form data using the combined schema
       combinedSchema.parse(postForm);
   
-      // If validation passes, proceed to create the post
       const result = await createPost(
         postForm.postType,
         "ACTIVE",
@@ -81,7 +79,6 @@ function CreatePost() {
       );
   
       if (result?.sucess) {
-        // Reset the form after successful post creation
         setPostForm({
           postType: "MISSING",
           petName: "",
@@ -104,11 +101,9 @@ function CreatePost() {
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
-        // Handle validation errors
         console.log("Validation errors:", error.errors);
         toast.error("Please fill out all required fields correctly.");
       } else {
-        // Handle other errors
         toast.error("Failed to create post");
         console.log("Failed to create post:", error);
       }
