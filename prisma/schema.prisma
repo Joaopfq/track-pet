@@ -42,14 +42,13 @@ model Post {
   status      PostStatus     @default(ACTIVE)
   postedAt    DateTime       @default(now())
 
-  // Embedded pet info
   petName     String?
   species     Species
   breed       String?
   color       String?
   gender      Gender?
   ageApprox   String?
-  specialCharacteristics String[] // e.g., ["blue collar", "limping"]
+  specialCharacteristics String[]
 
   description String
   photo       String
