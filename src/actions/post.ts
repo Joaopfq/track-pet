@@ -69,6 +69,7 @@ export async function getPosts() {
             name: true,
             username: true,
             image: true,
+            email: true,
           },
 
         },

@@ -1,14 +1,19 @@
+"use client";
+
 import { getPosts } from "@/actions/post";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import Link from "next/link";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { formatDistanceToNow } from "date-fns";
+import { useState } from "react";
 
 type Posts = Awaited<ReturnType<typeof getPosts>>;
 type Post = Posts[number];
 
 function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
   
+  const [seeMore, setSeeMore] = useState(false);
+
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-4 sm:p-6">
@@ -20,7 +25,7 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
               </Avatar>
             </Link>
 
-            {/* POST HEADER & TEXT CONTENT */}
+            {/* POST USER HEADER */}
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 truncate">
@@ -37,9 +42,14 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
                   </div>
                 </div>
               </div>
-              <p className="mt-2 text-sm text-foreground break-words">{post.description}</p>
             </div>
           </div>
+
+          {/* POST PET HEADER */}
+          <h1 className={post.type === "MISSING" ? "text-destructive font-extrabold" : "text-chart-1 font-extrabold"}>
+            { post.type === "MISSING" ? "LOST PET" : "FOUND PET"}            
+          </h1>
+
 
           {/* POST IMAGE */}
           {post.photo && (
@@ -48,8 +58,63 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
             </div>
           )}
 
-          {/* LIKE & COMMENT BUTTONS */}
-          
+          {/* POST CONTENT */}
+          <div className="flex flex-col sm:flex-row sm:justify-stretch">
+            <div className="pl-0 sm:pl-0 sm:pr-4">
+              {post.petName && (
+                <div className="mt-2 text-sm text-muted-foreground">
+                  <strong>Pet Name:</strong> {post.petName}
+                </div>
+              )}
+              {post.species && post.color && (
+                <div className="mt-2 text-sm text-muted-foreground">
+                  <strong>Breed:</strong> {post.breed} {post.color}
+                </div>
+              )}
+              {post.gender && (
+                <div className="mt-2 text-sm text-muted-foreground">
+                  <strong>Gender:</strong> {post.gender}
+                </div>
+              )}
+            </div>
+            <div>
+              {post.ageApprox && (
+                <div className="mt-2 text-sm text-muted-foreground">
+                  <strong>Age:</strong> {post.ageApprox}
+                </div>
+              )}
+              {post.user.email && (
+                <div className="mt-2 text-sm text-muted-foreground">
+                  <strong>Contact: </strong>                  
+                  <Link
+                    href={`mailto:${post.user.email}`}
+                    className="text-blue-500 hover:underline">
+                    {post.user.email}     
+                  </Link>                  
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* POST SEE MORE */}
+          <button
+            onClick={() => setSeeMore(!seeMore)}
+            className="text-blue-500 hover:underline ml-1"
+          >
+            {seeMore ? "" : "See More"}
+          </button>
+
+          { seeMore && (
+            <div className="mt-2 text-sm text-muted-foreground">
+              {post.description && (
+                <div>
+                  <strong>Description: </strong> 
+                  {post.description}
+                  
+                </div>
+              )}
+            </div>
+          )}
 
           {/* COMMENTS SECTION */}
           
