@@ -5,33 +5,19 @@ import { DatePicker } from "@/components/DatePicker";
 import { step2Schema } from "@/lib/validations/postSchemas";
 import { debounce } from "@/lib/utils";
 import { z } from "zod";
+import { validateField } from "@/lib/validations/post";
 
 type Step2Fields = keyof z.infer<typeof step2Schema>;
 
 function Step2({ postForm, setPostForm }: { postForm: any; setPostForm: any }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const validateField = (name: Step2Fields, value: any) => {
-    try {
-      if (!step2Schema.shape[name]) {
-        console.error(`Invalid field name: ${name}`);
-        return;
-      }
-      z.object({ [name]: step2Schema.shape[name] }).parse({ [name]: value });
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        setErrors((prev) => ({
-          ...prev,
-          [name]: error.errors[0]?.message || "Invalid value",
-        }));
-      }
-    }
-  };
-
   const debouncedValidateField = useCallback(
-    debounce(validateField, 300),
-    [validateField]
+    debounce((name: Step2Fields, value: any) => {
+      const error = validateField(step2Schema, name, value);
+      setErrors((prev) => ({ ...prev, [name]: error || "" }));
+    }, 300),
+    []
   );
 
   const handleInputChange = (name: Step2Fields, value: any) => {

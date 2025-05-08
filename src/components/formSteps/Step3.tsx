@@ -4,6 +4,7 @@ import ImageUpload from "@/components/ImageUpload";
 import { z } from "zod";
 import { step3Schema } from "@/lib/validations/postSchemas";
 import { debounce } from "@/lib/utils";
+import { validateField } from "@/lib/validations/post";
 
 type Step3Fields = keyof z.infer<typeof step3Schema>;
 
@@ -11,27 +12,12 @@ function Step3({ postForm, setPostForm }: { postForm: any; setPostForm: any }) {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   
-  const validateField = (name: Step3Fields, value: any) => {
-    try {
-      if (!step3Schema.shape[name]) {
-        console.error(`Invalid field name: ${name}`);
-        return;
-      }
-      z.object({ [name]: step3Schema.shape[name] }).parse({ [name]: value });
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        setErrors((prev) => ({
-          ...prev,
-          [name]: error.errors[0]?.message || "Invalid value",
-        }));
-      }
-    }
-  };
-
   const debouncedValidateField = useCallback(
-    debounce(validateField, 300),
-    [validateField]
+    debounce((name: Step3Fields, value: any) => {
+      const error = validateField(step3Schema, name, value);
+      setErrors((prev) => ({ ...prev, [name]: error || "" }));
+    }, 300),
+    []
   );
 
   const handleInputChange = (name: Step3Fields, value: any) => {

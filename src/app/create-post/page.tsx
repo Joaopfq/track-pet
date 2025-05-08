@@ -1,19 +1,36 @@
-"use client"
+"use client";
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import React, { useState } from 'react'
-import { Gender, PostType, Species } from '@prisma/client'
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState } from 'react';
+import { Gender, PostType, Species } from '@prisma/client';
 import { useSearchParams } from "next/navigation";
-import { mapStringToEnum } from '@/lib/utils'
-import { createPost } from '@/actions/post'
+import { mapStringToEnum } from '@/lib/utils';
+import { createPost } from '@/actions/post';
 import toast from "react-hot-toast";
-import Step4 from '@/components/formSteps/Step4'
-import Step3 from '@/components/formSteps/Step3'
-import Step2 from '@/components/formSteps/Step2'
-import Step1 from '@/components/formSteps/Step1'
-import { z } from 'zod'
-import { combinedSchema } from '@/lib/validations/postSchemas'
+import Step4 from '@/components/formSteps/Step4';
+import Step3 from '@/components/formSteps/Step3';
+import Step2 from '@/components/formSteps/Step2';
+import Step1 from '@/components/formSteps/Step1';
+import { z } from 'zod';
+import { combinedSchema } from '@/lib/validations/postSchemas';
+
+async function fetchNeighborhood(lat: number, lng: number): Promise<string | null> {
+  const url = `/api/leaflet?lat=${lat}&lon=${lng}`;
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+    return data.neighborhood;
+  } catch (error) {
+    return null; 
+  }
+}
 
 function CreatePost() {
   const searchParams = useSearchParams();
@@ -36,6 +53,7 @@ function CreatePost() {
     description: string;
     date: Date | undefined;
     imageUrl: string;
+    neighborhood: string;
     location: {
       lat: number;
       lng: number;
@@ -51,6 +69,7 @@ function CreatePost() {
     description: "",
     date: undefined,
     imageUrl: "",
+    neighborhood: "",
     location: {
       lat: 0,
       lng: 0,
@@ -60,28 +79,42 @@ function CreatePost() {
 
   const handleSubmit = async () => {
     try {
-      // Validate the form data using the combined schema
       combinedSchema.parse(postForm);
-  
-      // If validation passes, proceed to create the post
+
+      if (postForm.location.lat === 0 && postForm.location.lng === 0) {
+        toast.error("Please select a location on the map.");
+        return;
+      }
+
+      const neighborhood = await fetchNeighborhood(postForm.location.lat, postForm.location.lng);
+
+      if (!neighborhood) {
+        toast.error("Failed to fetch neighborhood. Please try again.");
+        return;
+      }
+
+      const updatedPostForm = { ...postForm, neighborhood };
+
+      console.log("Updated Post Form with Neighborhood:", updatedPostForm);
+
       const result = await createPost(
-        postForm.postType,
+        updatedPostForm.postType,
         "ACTIVE",
-        postForm.petName,
-        mapStringToEnum(Species, postForm.species) || Species.OTHER,
-        postForm.breed,
-        postForm.color,
-        mapStringToEnum(Gender, postForm.gender) || Gender.UNKNOWN,
-        postForm.ageApprox,
-        postForm.description,
-        postForm.imageUrl,
-        postForm.location.lat,
-        postForm.location.lng,
-        postForm.date ? postForm.date : null
+        updatedPostForm.petName,
+        mapStringToEnum(Species, updatedPostForm.species) || Species.OTHER,
+        updatedPostForm.breed,
+        updatedPostForm.color,
+        mapStringToEnum(Gender, updatedPostForm.gender) || Gender.UNKNOWN,
+        updatedPostForm.ageApprox,
+        updatedPostForm.description,
+        updatedPostForm.imageUrl,
+        updatedPostForm.location.lat,
+        updatedPostForm.location.lng,
+        updatedPostForm.date ? updatedPostForm.date : null,
+        updatedPostForm.neighborhood
       );
-  
+
       if (result?.sucess) {
-        // Reset the form after successful post creation
         setPostForm({
           postType: "MISSING",
           petName: "",
@@ -97,28 +130,25 @@ function CreatePost() {
             lat: 0,
             lng: 0,
           },
+          neighborhood: "",
         });
-  
+
         toast.success("Post created successfully");
         console.log("Post created successfully", result.post);
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
-        // Handle validation errors
         console.log("Validation errors:", error.errors);
         toast.error("Please fill out all required fields correctly.");
       } else {
-        // Handle other errors
         toast.error("Failed to create post");
         console.log("Failed to create post:", error);
       }
-    } finally {
-      // Handle any cleanup here (e.g., set loading state if applicable)
     }
   };
 
   return (
-    <Card >
+    <Card>
       <CardHeader>
         <CardTitle className='text-lg flex justify-between'>
           Report Pet
@@ -135,23 +165,23 @@ function CreatePost() {
           {step === 4 && <Step4 postForm={postForm} setPostForm={setPostForm} />}
         </div>
       </CardContent>
-      <CardFooter className='flex justify-between' >
+      <CardFooter className='flex justify-between'>
         {step > 1 && (
-          <Button className='w-32' variant="outline" onClick={back} >
+          <Button className='w-32' variant="outline" onClick={back}>
             Back
           </Button>
         )}
         {step < 4 && (
           <div className='flex justify-end w-full'>
-            <Button className='w-32' variant="outline" onClick={next} >
+            <Button className='w-32' variant="outline" onClick={next}>
               Next
             </Button>
           </div>
         )}
         {step === 4 && (
           <Button
-            className='w-32 bg-white text-black hover:bg-white/80 border border-black' 
-            variant="outline" 
+            className='w-32 bg-white text-black hover:bg-white/80 border border-black'
+            variant="outline"
             type="submit"
             onClick={handleSubmit}
           >
@@ -160,7 +190,7 @@ function CreatePost() {
         )}
       </CardFooter>
     </Card>
-  )
+  );
 }
 
-export default CreatePost
+export default CreatePost;

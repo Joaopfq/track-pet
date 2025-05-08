@@ -1,19 +1,101 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { getPosts } from "@/actions/post";
 import { getDbUserId } from "@/actions/user";
 import PostCard from "@/components/PostCard";
-import { currentUser } from "@clerk/nextjs/server";
+import PostsMap from "@/components/PostsMap";
 
-export default async function Home() {
+type Posts = Awaited<ReturnType<typeof getPosts>>;
+type Post = Posts[number];
 
-  const user = await currentUser();
-  const posts = await getPosts();
-  const dbUserId = await getDbUserId();
+// Helper function to calculate the distance between two points using the Haversine formula
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const toRadians = (degree: number) => (degree * Math.PI) / 180;
+  const R = 6371; // Earth's radius in kilometers
+  const dLat = toRadians(lat2 - lat1);
+  const dLon = toRadians(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c; // Distance in kilometers
+}
+
+export default function Home() {
+  const [posts, setPosts] = useState<Post[]>([]); // Strictly type state as Post[]
+  const [sortedPosts, setSortedPosts] = useState<Post[]>([]); // Strictly type state as Post[]
+  const [dbUserId, setDbUserId] = useState<string | null>(null); // Type explicitly as string | null
+
+  useEffect(() => {
+    // Fetch posts and user data on mount
+    const fetchData = async () => {
+      try {
+        const fetchedPosts = await getPosts();
+        const fetchedDbUserId = await getDbUserId();
+        setPosts(fetchedPosts);
+        setDbUserId(fetchedDbUserId);
+      } catch (error) {
+        console.error("Error fetching posts or user data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    // Get user's location and sort posts by proximity
+    if (posts.length > 0) {
+      if (typeof window !== "undefined" && navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const userLat = position.coords.latitude;
+            const userLon = position.coords.longitude;
+
+            const sorted = [...posts].sort((postA, postB) => {
+              const distanceA = calculateDistance(
+                userLat,
+                userLon,
+                postA.locationLat,
+                postA.locationLng
+              );
+              const distanceB = calculateDistance(
+                userLat,
+                userLon,
+                postB.locationLat,
+                postB.locationLng
+              );
+              return distanceA - distanceB; // Sort in ascending order of distance
+            });
+
+            setSortedPosts(sorted);
+          },
+          (error) => {
+            console.warn("User denied location access or an error occurred:", error.message);
+            setSortedPosts(posts); // Default to unsorted posts
+          }
+        );
+      } else {
+        setSortedPosts(posts); // Default to unsorted posts if geolocation is unavailable
+      }
+    }
+  }, [posts]);
 
   return (
-    <div className="space-y-6">
-      {posts.map((post) => (
-        <PostCard key={post.id} post={post} dbUserId={dbUserId}/>
-      ))}
+    <div className="grid grid-cols-1 lg:grid-cols-10 gap-6">
+      <div className="lg:col-span-6">
+        <div className="space-y-6">
+          {sortedPosts.map((post) => (
+            <PostCard key={post.id} post={post} dbUserId={dbUserId} />
+          ))}
+        </div>
+      </div>
+      <div className="hidden lg:block lg:col-span-4 sticky top-20">
+        <PostsMap />
+      </div>
     </div>
   );
 }
