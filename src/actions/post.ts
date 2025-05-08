@@ -19,6 +19,7 @@ export async function createPost(
     locationLat: number,
     locationLng: number,
     missingDate: Date | null,
+    neighborhood: string,
   ){
   try {
 
@@ -42,6 +43,7 @@ export async function createPost(
         locationLng,
         photo,
         userId: userId,
+        neighborhood,
       },
     });
     
@@ -95,5 +97,30 @@ export async function getPosts() {
   } catch (error) {
     console.log("Error fetching posts:", error);
     throw new Error("Failed to fetch posts");
+  }
+}
+
+export async function deletePost(postId: string) {
+  try {
+    const userId = await getDbUserId();
+
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { userId: true },
+    });
+
+    if (!post) throw new Error("Post not found");
+    if (post.userId !== userId) throw new Error("Unauthorized - no delete permission");
+
+    await prisma.post.delete({
+      where: { id: postId },
+    });
+
+    revalidatePath("/"); // purge the cache
+    return { success: true };
+    
+  } catch (error) {
+    console.error("Failed to delete post:", error);
+    return { success: false, error: "Failed to delete post" };
   }
 }
