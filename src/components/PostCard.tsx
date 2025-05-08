@@ -1,11 +1,13 @@
 "use client";
 
-import { getPosts } from "@/actions/post";
+import { deletePost, getPosts } from "@/actions/post";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import Link from "next/link";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { DeleteAlertDialog } from "./DeleteAlertDialog";
 
 type Posts = Awaited<ReturnType<typeof getPosts>>;
 type Post = Posts[number];
@@ -13,6 +15,21 @@ type Post = Posts[number];
 function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
   
   const [seeMore, setSeeMore] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeletePost = async () => {
+    if (isDeleting) return;
+    try {
+      setIsDeleting(true);
+      const result = await deletePost(post.id);
+      if (result.success) toast.success("Post deleted successfully");
+      else throw new Error(result.error);
+    } catch (error) {
+      toast.error("Failed to delete post");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <Card className="overflow-hidden">
@@ -41,6 +58,10 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
                     <span>{formatDistanceToNow(new Date(post.postedAt))} ago</span>
                   </div>
                 </div>
+                {/* Check if current user is the post author */}
+                {dbUserId === post.user.id && (
+                  <DeleteAlertDialog isDeleting={isDeleting} onDeleteAction={handleDeletePost} />
+                )}
               </div>
             </div>
           </div>
@@ -81,6 +102,11 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
               {post.ageApprox && (
                 <div className="mt-2 text-sm text-muted-foreground">
                   <strong>Age:</strong> {post.ageApprox}
+                </div>
+              )}
+              {post.neighborhood && (
+                <div className="mt-2 text-sm text-muted-foreground">
+                  <strong>Last seen:</strong> {post.neighborhood}
                 </div>
               )}
               {post.user.email && (
