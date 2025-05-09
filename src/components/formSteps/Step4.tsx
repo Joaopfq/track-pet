@@ -6,7 +6,7 @@ import { validateField } from "@/lib/validations/post";
 import { z } from "zod";
 import { step4Schema } from "@/lib/validations/postSchemas";
 
-const Map = dynamic(() => import("@/components/Map"), { ssr: false });
+const Map = dynamic(() => import("@/components/FormMap"), { ssr: false });
 type Step4Fields = keyof z.infer<typeof step4Schema>;
 
 function Step4({ postForm, setPostForm }: { postForm: any; setPostForm: any }) {
