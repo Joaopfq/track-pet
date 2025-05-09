@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Navbar from "@/components/Navbar";
@@ -8,6 +7,7 @@ import { Roboto } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import Sidebar from "@/components/Sidebar";
 import { Toaster } from "react-hot-toast";
+import StoreProvider from '../app/StoreProvider'
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -43,21 +43,22 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className="min-h-screen">
-              <Navbar />
-              <main className="py-8">
-                  {/* container to center the content */}
-                  <div className="max-w-7xl mx-auto px-4">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                      <div className="hidden lg:block lg:col-span-3">
-                        <Sidebar />
+            <StoreProvider>
+              <div className="min-h-screen">
+                <Navbar />
+                <main className="py-8">
+                    <div className="max-w-7xl mx-auto px-4">
+                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <div className="hidden lg:block lg:col-span-3">
+                          <Sidebar />
+                        </div>
+                          <div className="lg:col-span-9">{children}</div>
                       </div>
-                        <div className="lg:col-span-9">{children}</div>
                     </div>
-                  </div>
-                </main>
-            </div>
-            <Toaster />
+                  </main>
+              </div>
+              <Toaster />
+            </StoreProvider>              
           </ThemeProvider>
         </body>
       </html>
