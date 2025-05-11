@@ -81,22 +81,25 @@ export default function Home() {
   }, [posts, location]);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const userLat = position.coords.latitude;
-          const userLon = position.coords.longitude;
-          dispatch(setLocation({ latitude: userLat, longitude: userLon }));
-        },
-        (error) => {
-          toast.error("Failed to retrieve user location");
-          dispatch(clearLocation());
-        }
-      );
-    } else {
-      toast.error("Geolocation is not supported by this browser.");
+    // Only attempt to fetch location if it's not already stored
+    if (!isLocationValid(location)) {
+      if (typeof window !== "undefined" && navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const userLat = position.coords.latitude;
+            const userLon = position.coords.longitude;
+            dispatch(setLocation({ latitude: userLat, longitude: userLon }));
+          },
+          (error) => {
+            toast.error("Failed to retrieve user location");
+            dispatch(clearLocation());
+          }
+        );
+      } else {
+        toast.error("Geolocation is not supported by this browser.");
+      }
     }
-  }, [dispatch]);
+  }, [dispatch, location]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-10 gap-6">

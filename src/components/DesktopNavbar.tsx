@@ -2,7 +2,7 @@ import { currentUser } from '@clerk/nextjs/server';
 import React from 'react'
 import { Button } from './ui/button';
 import Link from 'next/link';
-import { CircleHelpIcon, HomeIcon, InfoIcon, UserIcon } from 'lucide-react';
+import { CircleHelpIcon, HomeIcon, InfoIcon, MapIcon, UserIcon } from 'lucide-react';
 import { SignInButton, UserButton } from '@clerk/nextjs';
 import ModeToggle from './ModeToggle';
 
@@ -22,19 +22,11 @@ async function DesktopNavbar() {
       </Button>
 
       <Button variant="ghost" className="flex items-center gap-2" asChild>
-        <Link href="/about">
-          <InfoIcon className="text-primary-foreground w-4 h-4" />
-          <span className="text-primary-foreground hidden lg:inline">About us</span>
+        <Link href="/map">
+          <MapIcon className="text-primary-foreground w-4 h-4" />
+          <span className="text-primary-foreground hidden lg:inline">Pet Map</span>
         </Link>
       </Button>
-
-      <Button variant="ghost" className="flex items-center gap-2" asChild>
-        <Link href="/guide">
-          <CircleHelpIcon className="text-primary-foreground w-4 h-4" />
-          <span className="text-primary-foreground hidden lg:inline">Guide</span>
-        </Link>
-      </Button>
-
 
       {user ? (
         <>

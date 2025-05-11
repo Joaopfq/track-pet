@@ -51,7 +51,9 @@ export default function PostsMap({ posts, userLocation }: PostsMapProps) {
                 style={{ width: "100px", height: "100px", objectFit: "cover" }}
               />
               <br />
-              Road: {post.neighborhood}
+              {post.type}
+              <br />
+              Last seen: {post.neighborhood}
             </Popup>
           </Marker>
         );
@@ -62,7 +64,7 @@ export default function PostsMap({ posts, userLocation }: PostsMapProps) {
         <Marker
           position={[userLocation.lat, userLocation.lng]}
           icon={L.icon({
-            iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-red.png",
+            iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
             iconSize: [25, 41],
             iconAnchor: [12, 41],
           })}

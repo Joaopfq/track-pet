@@ -6,6 +6,7 @@ import {
   HomeIcon,
   InfoIcon,
   LogOutIcon,
+  MapIcon,
   MenuIcon,
   MoonIcon,
   SunIcon,
@@ -45,17 +46,12 @@ function MobileNavbar() {
               </Link>
             </Button>
             <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
-              <Link href="/">
-                <InfoIcon className="w-4 h-4" />
-                About us
+              <Link href="/map">
+                <MapIcon className="w-4 h-4" />
+                Pet Map
               </Link>
             </Button>
-            <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
-              <Link href="/">
-                <CircleHelpIcon className="w-4 h-4" />
-                Guide
-              </Link>
-            </Button>
+
             {isSignedIn ? (
               <>
                 <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
