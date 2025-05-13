@@ -14,6 +14,7 @@ import Step2 from '@/components/formSteps/Step2';
 import Step1 from '@/components/formSteps/Step1';
 import { z } from 'zod';
 import { combinedSchema } from '@/lib/validations/postSchemas';
+import Link from 'next/link';
 
 async function fetchNeighborhood(lat: number, lng: number): Promise<string | null> {
   const url = `/api/leaflet?lat=${lat}&lon=${lng}`;
@@ -85,7 +86,7 @@ function CreatePost() {
         toast.error("Please select a location on the map.");
         return;
       }
-
+      console.log("Post Form before fetching neighborhood:", postForm);
       const neighborhood = await fetchNeighborhood(postForm.location.lat, postForm.location.lng);
 
       if (!neighborhood) {
@@ -179,6 +180,7 @@ function CreatePost() {
           </div>
         )}
         {step === 4 && (
+        <Link href="/">
           <Button
             className='w-32 bg-white text-black hover:bg-white/80 border border-black'
             variant="outline"
@@ -187,6 +189,7 @@ function CreatePost() {
           >
             Post
           </Button>
+        </Link>
         )}
       </CardFooter>
     </Card>
