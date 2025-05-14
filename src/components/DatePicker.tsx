@@ -23,9 +23,9 @@ export function DatePicker({ value, onChangeAction }: DatePickerProps) {
     <Popover>
       <PopoverTrigger asChild>
         <Button
-          variant={"outline"}
+          variant={"ghost"}
           className={cn(
-            "w-[240px] justify-start text-left font-normal",
+            "border w-[240px] justify-start text-left font-normal",
             !value && "text-muted-foreground"
           )}
         >
