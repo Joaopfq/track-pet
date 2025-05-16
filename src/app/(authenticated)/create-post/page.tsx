@@ -2,9 +2,9 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Gender, PostType, Species } from '@prisma/client';
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { mapStringToEnum } from '@/lib/utils';
 import { createPost } from '@/actions/post';
 import toast from "react-hot-toast";
@@ -15,6 +15,7 @@ import Step1 from '@/components/formSteps/Step1';
 import { z } from 'zod';
 import { combinedSchema } from '@/lib/validations/postSchemas';
 import Link from 'next/link';
+import { useAuth } from '@clerk/nextjs';
 
 async function fetchNeighborhood(lat: number, lng: number): Promise<string | null> {
   const url = `/api/leaflet?lat=${lat}&lon=${lng}`;
@@ -34,6 +35,15 @@ async function fetchNeighborhood(lat: number, lng: number): Promise<string | nul
 }
 
 function CreatePost() {
+  const { isSignedIn } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isSignedIn) {
+      router.push('/');
+    }
+  }, [isSignedIn, router]);
+  
   const searchParams = useSearchParams();
 
   const postType = searchParams.get("postType");
@@ -86,7 +96,6 @@ function CreatePost() {
         toast.error("Please select a location on the map.");
         return;
       }
-      console.log("Post Form before fetching neighborhood:", postForm);
       const neighborhood = await fetchNeighborhood(postForm.location.lat, postForm.location.lng);
 
       if (!neighborhood) {
@@ -95,8 +104,6 @@ function CreatePost() {
       }
 
       const updatedPostForm = { ...postForm, neighborhood };
-
-      console.log("Updated Post Form with Neighborhood:", updatedPostForm);
 
       const result = await createPost(
         updatedPostForm.postType,
@@ -135,15 +142,12 @@ function CreatePost() {
         });
 
         toast.success("Post created successfully");
-        console.log("Post created successfully", result.post);
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
-        console.log("Validation errors:", error.errors);
         toast.error("Please fill out all required fields correctly.");
       } else {
         toast.error("Failed to create post");
-        console.log("Failed to create post:", error);
       }
     }
   };
