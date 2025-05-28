@@ -1,91 +1,78 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { clearLocation, setLocation } from "@/lib/features/location/locationSlice";
-import PostsMap from "@/components/PostsMap";
+import { useEffect, useState } from "react";
+import { useAppSelector, useAppDispatch } from "@/lib/hooks";
+import { setLocation, clearLocation } from "@/lib/features/location/locationSlice";
+import { getPostsByProximity } from "@/actions/post";
 import toast from "react-hot-toast";
-import { getPosts } from "@/actions/post";
+import PostsMap from "./PostsMap";
 
-type Posts = Awaited<ReturnType<typeof getPosts>>;
+type Posts = Awaited<ReturnType<typeof getPostsByProximity>>;
 type Post = Posts[number];
 
-function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const toRadians = (degree: number) => (degree * Math.PI) / 180;
-  const R = 6371;
-  const dLat = toRadians(lat2 - lat1);
-  const dLon = toRadians(lon2 - lon1);
-
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}
-
-function isLocationValid(location: { latitude: number | null; longitude: number | null }): location is { latitude: number; longitude: number } {
-  return location.latitude !== null && location.longitude !== null;
-}
-
-export default function PostsMapWrapper({ posts }: { posts: Post[] }) {
-  const [sortedPosts, setSortedPosts] = useState<Post[]>(posts);
+export default function PostsMapWrapper() {
   const location = useAppSelector((state) => state.location);
   const dispatch = useAppDispatch();
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  // Fetch posts on mount or when location changes
   useEffect(() => {
-    if (!isLocationValid(location)) {
-      if (typeof window !== "undefined" && navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const userLat = position.coords.latitude;
-            const userLon = position.coords.longitude;
-            dispatch(setLocation({ latitude: userLat, longitude: userLon }));
-          },
-          (error) => {
-            toast.error("Failed to retrieve user location");
-            dispatch(clearLocation());
-          }
-        );
-      } else {
-        toast.error("Geolocation is not supported by this browser.");
+    async function fetchPosts() {
+      setLoading(true);
+      try {
+        let postsRes: Post[];
+        if (
+          location.latitude !== null &&
+          location.longitude !== null
+        ) {
+          postsRes = await getPostsByProximity(location.latitude, location.longitude);
+        } else {
+          postsRes = await getPostsByProximity();
+        }
+        setPosts(postsRes);
+      } catch (e) {
+        toast.error("Failed to fetch map posts.");
+      } finally {
+        setLoading(false);
       }
     }
-  }, [dispatch, location]);
+    fetchPosts();
+  }, [location.latitude, location.longitude]);
 
+  // Try to get user location on mount
   useEffect(() => {
-    if (posts.length > 0 && isLocationValid(location)) {
-      const sorted = [...posts].sort((postA, postB) => {
-        const distanceA = calculateDistance(
-          location.latitude,
-          location.longitude,
-          postA.locationLat,
-          postA.locationLng
-        );
-        const distanceB = calculateDistance(
-          location.latitude,
-          location.longitude,
-          postB.locationLat,
-          postB.locationLng
-        );
-        return distanceA - distanceB;
-      });
-
-      setSortedPosts(sorted);
-    } else {
-      setSortedPosts(posts);
+    if (
+      typeof window !== "undefined" &&
+      navigator.geolocation &&
+      (location.latitude === null || location.longitude === null)
+    ) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          dispatch(
+            setLocation({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            })
+          );
+        },
+        () => {
+          toast.error("Unable to get your location.");
+          dispatch(clearLocation());
+        }
+      );
     }
-  }, [posts, location]);
+  }, [dispatch, location.latitude, location.longitude]);
 
   return (
     <PostsMap
-      posts={sortedPosts}
+      posts={posts}
       userLocation={
         location.latitude !== null && location.longitude !== null
           ? { lat: location.latitude, lng: location.longitude }
           : undefined
       }
+      loading={loading}
     />
   );
 }

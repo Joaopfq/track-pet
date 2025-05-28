@@ -1,6 +1,6 @@
 "use client";
 
-import { deletePost, getPosts } from "@/actions/post";
+import { deletePost, getPostsByProximity } from "@/actions/post";
 import { Card, CardContent} from "./ui/card";
 import Link from "next/link";
 import { Avatar, AvatarImage } from "./ui/avatar";
@@ -9,7 +9,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { DeleteAlertDialog } from "./DeleteAlertDialog";
 
-type Posts = Awaited<ReturnType<typeof getPosts>>;
+type Posts = Awaited<ReturnType<typeof getPostsByProximity>>;
 type Post = Posts[number];
 
 function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
