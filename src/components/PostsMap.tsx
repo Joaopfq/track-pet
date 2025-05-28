@@ -37,7 +37,7 @@ export default function PostsMap({ posts, userLocation, loading }: PostsMapProps
   }, [userLocation]);
 
   return (
-    <div className="relative">
+    <div className="sticky top-20">
       {loading && (
         <div className="absolute z-[1000] w-full h-full flex items-center justify-center bg-black bg-opacity-30 rounded-xl">
           <span className="text-white text-lg font-medium animate-pulse">
@@ -46,7 +46,7 @@ export default function PostsMap({ posts, userLocation, loading }: PostsMapProps
         </div>
       )}
       <MapContainer
-        className="sticky top-20 rounded-xl"
+        className="rounded-xl"
         center={[mapCenter.lat, mapCenter.lng]}
         zoom={13}
         style={{ height: "500px", width: "100%" }}
