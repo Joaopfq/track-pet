@@ -37,7 +37,7 @@ export default function SearchInput() {
   return (
     <>
       {/* Desktop: always show input, aligned right */}
-      <div className="hidden md:flex justify-end w-full max-w-xs ml-auto mr-10">
+      <div className="hidden md:flex justify-end w-full max-w-xs ml-auto mr-3">
         <Input
           type="text"
           placeholder="Search posts…"
