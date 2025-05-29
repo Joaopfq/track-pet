@@ -4,6 +4,7 @@ import DesktopNavbar from './DesktopNavbar'
 import MobileNavbar from './MobileNavbar'
 import { currentUser } from '@clerk/nextjs/server'
 import { syncUser } from '@/actions/user'
+import SearchInput from './SearchInput'
 
 async function Navbar() {
   
@@ -15,11 +16,11 @@ async function Navbar() {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <Link href="/" className="text-xl font-bold text-primary-foreground font-poppins tracking-wider">
+            <Link href="/" className="mr-1 text-base sm:text-lg font-bold text-primary-foreground font-poppins tracking-wider whitespace-nowrap">
               Track Pet
             </Link>
           </div>
-
+          <SearchInput />
           <DesktopNavbar />
           <MobileNavbar />
         </div>
