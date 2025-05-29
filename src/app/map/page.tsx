@@ -2,14 +2,14 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { getPosts } from "@/actions/post";
+import { getPostsByProximity } from "@/actions/post";
 import toast from "react-hot-toast";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { clearLocation, setLocation } from "@/lib/features/location/locationSlice";
 
 const PostsMap = dynamic(() => import("@/components/PostsMap"), { ssr: false });
 
-type Posts = Awaited<ReturnType<typeof getPosts>>;
+type Posts = Awaited<ReturnType<typeof getPostsByProximity>>;
 type Post = Posts[number];
 
 function isLocationValid(location: { latitude: number | null; longitude: number | null }): location is { latitude: number; longitude: number } {
@@ -24,7 +24,7 @@ function MapPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const fetchedPosts = await getPosts();
+        const fetchedPosts = await getPostsByProximity();
         setPosts(fetchedPosts);
       } catch (error) {
         toast.error("Failed to fetch posts");
@@ -56,7 +56,7 @@ function MapPage() {
   }, [dispatch, location]);
 
   return (
-    <div style={{ height: "100vh", width: "100%" }}>
+    <div style={{ height: "100%", width: "100%" }}>
       <PostsMap
         posts={posts}
         userLocation={

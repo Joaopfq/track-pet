@@ -58,45 +58,106 @@ export async function createPost(
   }
 }
 
-export async function getPosts() {
+export async function getPostsByProximity(lat?: number, lng?: number) {
   try {
-    const posts = await prisma.post.findMany({
-      orderBy: {
-        postedAt: "desc",
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            username: true,
-            image: true,
-            email: true,
-          },
+    if (typeof lat === "number" && typeof lng === "number") {
+      // Use raw SQL for distance calculation and sorting
+      // Adjust "Post" to match your actual table name if necessary
+      const posts = await prisma.$queryRaw<
+        any[]
+      >`
+        SELECT 
+          p.*,
+          (
+            6371 * acos(
+              cos(radians(${lat}))
+              * cos(radians(p."locationLat"))
+              * cos(radians(p."locationLng") - radians(${lng}))
+              + sin(radians(${lat})) * sin(radians(p."locationLat"))
+            )
+          ) AS distance
+        FROM "Post" p
+        ORDER BY distance ASC, "postedAt" DESC
+        LIMIT 100
+      `;
 
-        },
-        comments: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                username: true,
-                image: true,
-              }
-            }
+      // For each post, fetch user and comments as per your previous structure
+      // Here is a simple way to hydrate related data using findMany and ids
+      const postIds = posts.map(post => post.id);
+      const postsWithRelations = await prisma.post.findMany({
+        where: { id: { in: postIds } },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              image: true,
+              email: true,
+            },
           },
-          orderBy: {
-            createdAt: "asc",
-          }
+          comments: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  username: true,
+                  image: true,
+                },
+              },
+            },
+            orderBy: {
+              createdAt: "asc",
+            },
+          },
         },
-      },
-    });
+      });
 
-    return posts;
+      // Ensure the posts are in the same order as by proximity
+      const postsById: Record<string, typeof postsWithRelations[number]> = {};
+      postsWithRelations.forEach(p => { postsById[p.id] = p; });
+      const sorted = postIds.map(id => postsById[id]).filter(Boolean);
+
+      return sorted;
+    } else {
+      // Fallback to original getPosts logic (order by postedAt)
+      const posts = await prisma.post.findMany({
+        orderBy: {
+          postedAt: "desc",
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              image: true,
+              email: true,
+            },
+          },
+          comments: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  username: true,
+                  image: true,
+                },
+              },
+            },
+            orderBy: {
+              createdAt: "asc",
+            },
+          },
+        },
+      });
+      return posts;
+    }
   } catch (error) {
-    console.log("Error fetching posts:", error);
-    throw new Error("Failed to fetch posts");
+    console.log("Error fetching posts by proximity:", error);
+    throw new Error("Failed to fetch posts by proximity");
   }
 }
 

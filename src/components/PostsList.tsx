@@ -1,7 +1,7 @@
-import { getPosts } from "@/actions/post";
+import { getPostsByProximity } from "@/actions/post";
 import PostCard from "@/components/PostCard";
 
-type Posts = Awaited<ReturnType<typeof getPosts>>;
+type Posts = Awaited<ReturnType<typeof getPostsByProximity>>;
 type Post = Posts[number];
 
 export default function PostsList({ posts, dbUserId }: { posts: Post[]; dbUserId: string | null }) {
