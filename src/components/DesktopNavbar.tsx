@@ -2,7 +2,7 @@ import { currentUser } from '@clerk/nextjs/server';
 import React from 'react'
 import { Button } from './ui/button';
 import Link from 'next/link';
-import { CircleHelpIcon, HomeIcon, InfoIcon, MapIcon, UserIcon } from 'lucide-react';
+import { HomeIcon, MapIcon, UserIcon } from 'lucide-react';
 import { SignInButton, UserButton } from '@clerk/nextjs';
 import ModeToggle from './ModeToggle';
 
