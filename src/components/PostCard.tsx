@@ -8,6 +8,8 @@ import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { DeleteAlertDialog } from "./DeleteAlertDialog";
+import ShareDropdown from "./ShareDropdown";
+import { mapEnumToString } from "@/lib/utils";
 
 type Posts = Awaited<ReturnType<typeof getPostsByProximity>>;
 type Post = Posts[number];
@@ -32,7 +34,7 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
   };
 
   return (
-    <Card className="overflow-hidden">
+    <Card id={post.id} className="overflow-hidden">
       <CardContent className="p-4 sm:p-6">
         <div className="space-y-4">
           <div className="flex space-x-3 sm:space-x-4">
@@ -58,7 +60,6 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
                     <span>{formatDistanceToNow(new Date(post.postedAt))} ago</span>
                   </div>
                 </div>
-                {/* Check if current user is the post author */}
                 {dbUserId === post.user.id && (
                   <DeleteAlertDialog isDeleting={isDeleting} onDeleteAction={handleDeletePost} />
                 )}
@@ -79,11 +80,20 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
             </div>
           )}
 
+          {/* POST SHARE */}
+          <div className="flex  justify-end items-center">
+              <ShareDropdown
+                url={`${process.env.NEXT_PUBLIC_BASE_URL}/#${post.id}`}
+                title={`${post.id}`}
+              />
+
+          </div>         
+
           {/* POST CONTENT */}
           <div className="flex flex-col sm:flex-row sm:justify-stretch">
             <div className="pl-0 sm:pl-0 sm:pr-4">
               {post.petName && (
-                <div className="mt-2 text-sm text-muted-foreground">
+                <div className="text-sm text-muted-foreground">
                   <strong>Pet Name:</strong> {post.petName}
                 </div>
               )}
@@ -100,7 +110,7 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
             </div>
             <div>
               {post.ageApprox && (
-                <div className="mt-2 text-sm text-muted-foreground">
+                <div className="text-sm text-muted-foreground">
                   <strong>Age:</strong> {post.ageApprox}
                 </div>
               )}
