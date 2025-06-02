@@ -1,33 +1,52 @@
-# 🐾 TrackPet
+# TrackPet
 
-**TrackPet** is a social platform that helps reunite lost pets with their owners. Users can post about **lost** or **found** pets, share photos, and connect with others in their community to increase the chances of a safe return.
-
----
-
-## 🚀 Tech Stack
-
-| Tech             | Description                                      |
-|------------------|--------------------------------------------------|
-| **Next.js**      | Fullstack React framework                        |
-| **React**        | Library for building user interfaces             |
-| **TypeScript**   | Strongly-typed JavaScript superset               |
-| **Tailwind CSS** | Utility-first CSS framework                      |
-| **shadcn/ui**    | Accessible and customizable UI components        |
-| **Clerk**        | Authentication and user management               |
-| **Neon**         | Serverless PostgreSQL database                   |
-| **PostgreSQL**   | Relational database                              |
-| **Prisma**       | Type-safe ORM for database access                |
-| **uploadthing**  | File upload service for handling pet photos      |
-| **Vercel**       | Deployment platform for frontend and backend     |
+**TrackPet** é uma plataforma social que ajuda a reunir pets perdidos com seus donos. Usuários podem publicar sobre animais **perdidos** ou **encontrados**, compartilhar fotos e se conectar com outras pessoas da comunidade para aumentar as chances de um reencontro seguro.
 
 ---
 
-## ✨ Features
+## Funcionalidades
 
-- 🐶 Post lost pets with detailed descriptions and photos  
-- 🐱 Post found pets to help locate their owners  
-- 📍 Browse and search nearby reports  
-- 👥 Authentication via Clerk  
-- 📸 Upload pet images with UploadThing  
-- 💬 Comment or message to help with pet recovery  
-- 🌙 Light/Dark mode support
+- Publicar pets perdidos com descrição e fotos
+- Publicar pets encontrados para tentar localizar o dono
+- Buscar e visualizar ocorrências próximas
+- Autenticação de usuários com Clerk
+- Upload de imagens com UploadThing
+- Comentários e interações entre usuários
+- Suporte a modos claro e escuro (light/dark)
+
+---
+
+## Tech Stack
+
+| Tecnologia        | Descrição                                        |
+|-------------------|--------------------------------------------------|
+| **Next.js**       | Framework React fullstack                        |
+| **React**         | Biblioteca para criação de interfaces            |
+| **TypeScript**    | Superset de JavaScript com tipagem estática      |
+| **Tailwind CSS**  | Framework de utilitários CSS                     |
+| **shadcn/ui**     | Componentes de UI acessíveis e customizáveis     |
+| **Clerk**         | Gerenciamento de usuários e autenticação         |
+| **Neon**          | Banco de dados PostgreSQL serverless             |
+| **PostgreSQL**    | Banco de dados relacional                        |
+| **Prisma**        | ORM type-safe para acesso ao banco               |
+| **UploadThing**   | Serviço de upload de imagens                     |
+| **Vercel**        | Plataforma de deploy para frontend e backend     |
+
+---
+
+## Instalação
+
+Para rodar o projeto localmente:
+
+```bash
+# Clone o repositório
+git clone git@github.com:Joaopfq/track-pet.git
+
+# Acesse a pasta do projeto
+cd track-pet
+
+# Instale as dependências
+npm install
+
+# Rode a aplicação
+npm run dev
