@@ -8,6 +8,7 @@
 
 - Publicar pets perdidos com descrição e fotos
 - Publicar pets encontrados para tentar localizar o dono
+- Ordenação de posts por proximidade do usuário
 - Buscar e visualizar ocorrências próximas
 - Autenticação de usuários com Clerk
 - Upload de imagens com UploadThing
