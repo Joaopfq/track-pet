@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { getPostsByProximity } from "@/actions/post";
+import Image from 'next/image'
 
 type Posts = Awaited<ReturnType<typeof getPostsByProximity>>;
 type Post = Posts[number];
@@ -15,7 +15,8 @@ interface PostsMapProps {
   loading?: boolean;
 }
 
-// Helper component to update map center when userLocation becomes available
+const maptilerKey = process.env.MAPTILER_KEY
+
 function RecenterMap({ center }: { center: { lat: number; lng: number } }) {
   const map = useMap();
   useEffect(() => {
@@ -25,11 +26,9 @@ function RecenterMap({ center }: { center: { lat: number; lng: number } }) {
 }
 
 export default function PostsMap({ posts, userLocation, loading }: PostsMapProps) {
-  // Use the userLocation if available; otherwise, use the default center of Brazil
   const BRAZIL_CENTER = { lat: -14.235004, lng: -51.92528 };
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>(userLocation || BRAZIL_CENTER);
 
-  // When userLocation becomes available, update center
   useEffect(() => {
     if (userLocation) {
       setMapCenter(userLocation);
@@ -53,8 +52,8 @@ export default function PostsMap({ posts, userLocation, loading }: PostsMapProps
       >
         <RecenterMap center={mapCenter} />
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a>'
+          url={`https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${process.env.NEXT_PUBLIC_MAPTILER_KEY}`}
         />
 
         {posts.map((post) => {
@@ -73,14 +72,12 @@ export default function PostsMap({ posts, userLocation, loading }: PostsMapProps
               <Popup>
                 {post.photo && (
                   <>
-                    <img
+                    <Image
                       src={post.photo}
-                      alt="Post photo"
-                      style={{
-                        width: "100px",
-                        height: "100px",
-                        objectFit: "cover",
-                      }}
+                      width={100}
+                      height={100}
+                      alt="Post popup image"
+                      quality={10}
                     />
                     <br />
                   </>
