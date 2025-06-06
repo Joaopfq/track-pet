@@ -9,7 +9,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { DeleteAlertDialog } from "./DeleteAlertDialog";
 import ShareDropdown from "./ShareDropdown";
-import { mapEnumToString } from "@/lib/utils";
+import Image from 'next/image'
 
 type Posts = Awaited<ReturnType<typeof getPostsByProximity>>;
 type Post = Posts[number];
@@ -76,7 +76,12 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
           {/* POST IMAGE */}
           {post.photo && (
             <div className="rounded-lg overflow-hidden">
-              <img src={post.photo} alt="Pet photo" className="w-full h-auto object-cover" />
+                <Image
+                  src={post.photo}
+                  width={500}
+                  height={500}
+                  alt="Picture of the pet"
+                />
             </div>
           )}
 
