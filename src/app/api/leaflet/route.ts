@@ -36,7 +36,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ neighborhood });
   } catch (error) {
-    console.error('Error in reverse geocoding:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
