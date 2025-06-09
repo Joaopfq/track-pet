@@ -30,7 +30,8 @@ async function fetchNeighborhood(lat: number, lng: number): Promise<string | nul
     const data = await response.json();
     return data.neighborhood;
   } catch (error) {
-    return null; 
+    toast.error("Failed to fetch neighborhood data");
+    throw new Error("Failed to fetch neighborhood data");
   }
 }
 
@@ -122,7 +123,7 @@ function CreatePost() {
         updatedPostForm.neighborhood
       );
 
-      if (result?.sucess) {
+      if (result?.success) {
         setPostForm({
           postType: "MISSING",
           petName: "",
