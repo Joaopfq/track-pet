@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { Gender, PostType, Species } from '@prisma/client';
 import { useRouter, useSearchParams } from "next/navigation";
 import { mapStringToEnum } from '@/lib/utils';
@@ -200,4 +200,10 @@ function CreatePost() {
   );
 }
 
-export default CreatePost;
+export default function CreatePostPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CreatePost />
+    </Suspense>
+  );
+}

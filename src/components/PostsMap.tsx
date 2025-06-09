@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import { getPostsByProximity } from "@/actions/post";
@@ -15,7 +15,6 @@ interface PostsMapProps {
   loading?: boolean;
 }
 
-const maptilerKey = process.env.MAPTILER_KEY
 
 function RecenterMap({ center }: { center: { lat: number; lng: number } }) {
   const map = useMap();
@@ -28,6 +27,19 @@ function RecenterMap({ center }: { center: { lat: number; lng: number } }) {
 export default function PostsMap({ posts, userLocation, loading }: PostsMapProps) {
   const BRAZIL_CENTER = { lat: -14.235004, lng: -51.92528 };
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>(userLocation || BRAZIL_CENTER);
+  
+  const defaultIcon = useMemo(() => L.icon({
+      iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+    }), []);
+  
+  const userIcon = useMemo(() =>
+    L.icon({
+      iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+    }), []);
 
   useEffect(() => {
     if (userLocation) {
@@ -52,8 +64,8 @@ export default function PostsMap({ posts, userLocation, loading }: PostsMapProps
       >
         <RecenterMap center={mapCenter} />
         <TileLayer
-          attribution='&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a>'
-          url={`https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${process.env.NEXT_PUBLIC_MAPTILER_KEY}`}
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
         {posts.map((post) => {
@@ -62,12 +74,7 @@ export default function PostsMap({ posts, userLocation, loading }: PostsMapProps
             <Marker
               key={post.id}
               position={[post.locationLat, post.locationLng]}
-              icon={L.icon({
-                iconUrl:
-                  "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-              })}
+              icon={defaultIcon}
             >
               <Popup>
                 {post.photo && (
@@ -77,7 +84,6 @@ export default function PostsMap({ posts, userLocation, loading }: PostsMapProps
                       width={100}
                       height={100}
                       alt="Post popup image"
-                      quality={10}
                     />
                     <br />
                   </>
@@ -97,12 +103,7 @@ export default function PostsMap({ posts, userLocation, loading }: PostsMapProps
         {userLocation && (
           <Marker
             position={[userLocation.lat, userLocation.lng]}
-            icon={L.icon({
-              iconUrl:
-                "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
-              iconSize: [25, 41],
-              iconAnchor: [12, 41],
-            })}
+            icon={userIcon}
           >
             <Popup>
               <strong>Your location</strong>

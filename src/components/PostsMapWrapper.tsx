@@ -43,7 +43,6 @@ export default function PostsMapWrapper({ initialPosts }: { initialPosts: Post[]
     fetchPosts();
   }, [location.latitude, location.longitude]);
 
-  // Try to get user location on mount
   useEffect(() => {
     if (
       typeof window !== "undefined" &&
