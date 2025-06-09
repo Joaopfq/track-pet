@@ -35,7 +35,6 @@ function MapPage() {
   }, []);
 
   useEffect(() => {
-    // Only attempt to fetch location if it's not already stored
     if (!isLocationValid(location)) {
       if (typeof window !== "undefined" && navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(

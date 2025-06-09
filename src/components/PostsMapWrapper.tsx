@@ -5,18 +5,21 @@ import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 import { setLocation, clearLocation } from "@/lib/features/location/locationSlice";
 import { getPostsByProximity } from "@/actions/post";
 import toast from "react-hot-toast";
-import PostsMap from "./PostsMap";
+import dynamic from "next/dynamic";
+
+const PostsMap = dynamic(() => import("@/components/PostsMap"), { ssr: false,
+  loading: () => <div style={{ height: 500, background: "#eee" }}>Loading map…</div>
+ });
 
 type Posts = Awaited<ReturnType<typeof getPostsByProximity>>;
 type Post = Posts[number];
 
-export default function PostsMapWrapper() {
+export default function PostsMapWrapper({ initialPosts }: { initialPosts: Post[] }) {
   const location = useAppSelector((state) => state.location);
   const dispatch = useAppDispatch();
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<Post[]>(initialPosts ?? []);
   const [loading, setLoading] = useState(true);
-
-  // Fetch posts on mount or when location changes
+  
   useEffect(() => {
     async function fetchPosts() {
       setLoading(true);
@@ -40,7 +43,6 @@ export default function PostsMapWrapper() {
     fetchPosts();
   }, [location.latitude, location.longitude]);
 
-  // Try to get user location on mount
   useEffect(() => {
     if (
       typeof window !== "undefined" &&

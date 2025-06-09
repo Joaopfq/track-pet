@@ -14,13 +14,12 @@ export function validateField<T extends ZodObject<any>>(
   value: any
 ): string | undefined {
   try {
-    // Dynamically create a schema for the single field
     z.object({ [fieldName]: schema.shape[fieldName] }).parse({ [fieldName]: value });
-    return undefined; // Field is valid
+    return undefined; 
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return error.errors[0]?.message || "Invalid value"; // Return the error message
+      return error.errors[0]?.message || "Invalid value"; 
     }
-    return "Invalid value"; // Fallback error message
+    return "Invalid value"; 
   }
 }

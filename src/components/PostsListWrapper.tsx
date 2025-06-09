@@ -29,11 +29,8 @@ export default function PostsListWrapper({
       }
     }
     fetchProximityPosts();
-    // Only refetch when location changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.latitude, location.longitude, initialPosts]);
 
-  // Client-side filter for search
   const filteredPosts = posts.filter((post) => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();

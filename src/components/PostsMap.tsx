@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { getPostsByProximity } from "@/actions/post";
+import Image from 'next/image'
 
 type Posts = Awaited<ReturnType<typeof getPostsByProximity>>;
 type Post = Posts[number];
@@ -15,7 +15,7 @@ interface PostsMapProps {
   loading?: boolean;
 }
 
-// Helper component to update map center when userLocation becomes available
+
 function RecenterMap({ center }: { center: { lat: number; lng: number } }) {
   const map = useMap();
   useEffect(() => {
@@ -25,11 +25,22 @@ function RecenterMap({ center }: { center: { lat: number; lng: number } }) {
 }
 
 export default function PostsMap({ posts, userLocation, loading }: PostsMapProps) {
-  // Use the userLocation if available; otherwise, use the default center of Brazil
   const BRAZIL_CENTER = { lat: -14.235004, lng: -51.92528 };
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>(userLocation || BRAZIL_CENTER);
+  
+  const defaultIcon = useMemo(() => L.icon({
+      iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+    }), []);
+  
+  const userIcon = useMemo(() =>
+    L.icon({
+      iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+    }), []);
 
-  // When userLocation becomes available, update center
   useEffect(() => {
     if (userLocation) {
       setMapCenter(userLocation);
@@ -63,24 +74,16 @@ export default function PostsMap({ posts, userLocation, loading }: PostsMapProps
             <Marker
               key={post.id}
               position={[post.locationLat, post.locationLng]}
-              icon={L.icon({
-                iconUrl:
-                  "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-              })}
+              icon={defaultIcon}
             >
               <Popup>
                 {post.photo && (
                   <>
-                    <img
+                    <Image
                       src={post.photo}
-                      alt="Post photo"
-                      style={{
-                        width: "100px",
-                        height: "100px",
-                        objectFit: "cover",
-                      }}
+                      width={100}
+                      height={100}
+                      alt="Post popup image"
                     />
                     <br />
                   </>
@@ -100,12 +103,7 @@ export default function PostsMap({ posts, userLocation, loading }: PostsMapProps
         {userLocation && (
           <Marker
             position={[userLocation.lat, userLocation.lng]}
-            icon={L.icon({
-              iconUrl:
-                "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
-              iconSize: [25, 41],
-              iconAnchor: [12, 41],
-            })}
+            icon={userIcon}
           >
             <Popup>
               <strong>Your location</strong>
