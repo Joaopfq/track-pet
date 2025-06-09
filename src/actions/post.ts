@@ -1,10 +1,10 @@
-"use server"
+"use server";
 
 import { getDbUserId } from "./user";
 import { prisma } from "@/lib/prisma";
 import { Gender, PostStatus, PostType, Species } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import redis from "@/lib/redis";
+import { redis } from "@/lib/redis";
 
 export async function createPost(
   type: PostType,
@@ -46,11 +46,12 @@ export async function createPost(
       },
     });
 
+    await invalidatePostsCache();
+
     revalidatePath("/");
-    return { sucess: true, post };
+    return { success: true, post };
   } catch (error) {
-    console.log("Failed to create post:", error);
-    return { sucess: false, error: "Failed to create post" };
+    return { success: false, error: "Failed to create post" };
   }
 }
 
@@ -65,7 +66,7 @@ export async function getPostsByProximity(
     : `posts:recent:page:${page}:perPage:${perPage}`;
 
   const cached = await redis.get(cacheKey);
-  if (cached) {
+  if (typeof cached === "string") {
     return JSON.parse(cached);
   }
 
@@ -126,9 +127,21 @@ export async function getPostsByProximity(
     });
   }
 
-  await redis.set(cacheKey, JSON.stringify(posts), "EX", 120);
+  await redis.set(cacheKey, JSON.stringify(posts), { ex: 120 });
 
   return posts;
+}
+
+/**
+ * Invalidate all posts-related caches in Redis.
+ */
+async function invalidatePostsCache() {
+  const keys = await redis.keys("posts:proximity:*");
+  const keysRecent = await redis.keys("posts:recent:*");
+  const allKeys = [...keys, ...keysRecent];
+  if (allKeys.length > 0) {
+    await redis.del(...allKeys);
+  }
 }
 
 export async function deletePost(postId: string) {
@@ -147,10 +160,11 @@ export async function deletePost(postId: string) {
       where: { id: postId },
     });
 
+    await invalidatePostsCache();
+
     revalidatePath("/");
     return { success: true };
   } catch (error) {
-    console.error("Failed to delete post:", error);
     return { success: false, error: "Failed to delete post" };
   }
 }
