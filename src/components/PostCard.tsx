@@ -18,6 +18,7 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
   
   const [seeMore, setSeeMore] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
   const handleDeletePost = async () => {
     if (isDeleting) return;
@@ -88,10 +89,9 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
           {/* POST SHARE */}
           <div className="flex  justify-end items-center">
               <ShareDropdown
-                url={`${process.env.NEXT_PUBLIC_BASE_URL}/#${post.id}`}
+                url={`${baseUrl}/#${post.id}`}
                 title={`${post.id}`}
               />
-
           </div>         
 
           {/* POST CONTENT */}
