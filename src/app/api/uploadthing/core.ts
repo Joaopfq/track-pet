@@ -23,7 +23,6 @@ export const ourFileRouter = {
       try {
         return { fileUrl: file.ufsUrl };
       } catch (error) {
-        console.error("Error in onUploadComplete:", error);
         throw error;
       }
     }),

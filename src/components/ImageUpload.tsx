@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { UploadDropzone } from '@/lib/uploadthing';
 import { XIcon } from 'lucide-react';
 import React from 'react'
+import toast from 'react-hot-toast';
 
 interface ImageUploadProps {
   onChange: (url: string) => void;
@@ -36,7 +37,7 @@ function ImageUpload({endpoint,onChange, value}: ImageUploadProps) {
         onChange(res?.[0]?.ufsUrl);  
       }}
         onUploadError={(error: Error) => {
-          console.log("Upload Error", error);
+          toast.error("Upload failed");
         }}
     />
   )
