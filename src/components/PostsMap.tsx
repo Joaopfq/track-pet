@@ -57,6 +57,7 @@ export default function PostsMap({ posts, userLocation, loading }: PostsMapProps
         </div>
       )}
       <MapContainer
+        aria-label="Posts map"
         className="rounded-xl"
         center={[mapCenter.lat, mapCenter.lng]}
         zoom={15}
