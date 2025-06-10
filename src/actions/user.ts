@@ -2,7 +2,6 @@
 
 import { prisma } from "@/lib/prisma";
 import { auth, currentUser } from "@clerk/nextjs/server"
-import { th } from "date-fns/locale";
 
 export async function syncUser() {
   try {
