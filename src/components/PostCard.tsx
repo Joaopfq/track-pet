@@ -41,7 +41,7 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
           <div className="flex space-x-3 sm:space-x-4">
             <Link href={`/profile/${post.user.username}`}>
               <Avatar className="size-8 sm:w-10 sm:h-10">
-                <AvatarImage src={post.user.image ?? "/avatar.png"} />
+                <AvatarImage alt="User image" src={post.user.image ?? "/avatar.png"} />
               </Avatar>
             </Link>
 
@@ -129,7 +129,7 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
                   <strong>Contact: </strong>                  
                   <Link
                     href={`mailto:${post.user.email}`}
-                    className="text-blue-500 hover:underline">
+                    className="text-chart-5 hover:underline">
                     {post.user.email}     
                   </Link>                  
                 </div>
@@ -140,7 +140,7 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
           {/* POST SEE MORE */}
           <button
             onClick={() => setSeeMore(!seeMore)}
-            className="text-blue-500 hover:underline ml-1"
+            className="text-chart-5 hover:underline ml-1"
           >
             {seeMore ? "" : "See More"}
           </button>
