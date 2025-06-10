@@ -59,7 +59,7 @@ export default function PostsMap({ posts, userLocation, loading }: PostsMapProps
       <MapContainer
         className="rounded-xl"
         center={[mapCenter.lat, mapCenter.lng]}
-        zoom={13}
+        zoom={15}
         style={{ height: "500px", width: "100%" }}
       >
         <RecenterMap center={mapCenter} />
