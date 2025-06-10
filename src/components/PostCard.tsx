@@ -82,6 +82,7 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
                   width={500}
                   height={500}
                   alt="Picture of the pet"
+                  loading="eager"
                 />
             </div>
           )}
