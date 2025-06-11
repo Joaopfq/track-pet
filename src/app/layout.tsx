@@ -8,7 +8,6 @@ import { ThemeProvider } from "next-themes";
 import Sidebar from "@/components/Sidebar";
 import { Toaster } from "react-hot-toast";
 import StoreProvider from '../app/StoreProvider'
-import 'leaflet/dist/leaflet.css';
 
 const poppins = Poppins({
   subsets: ["latin"],

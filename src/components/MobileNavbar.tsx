@@ -1,15 +1,10 @@
 "use client";
 
 import {
-  BellIcon,
-  CircleHelpIcon,
   HomeIcon,
-  InfoIcon,
   LogOutIcon,
   MapIcon,
   MenuIcon,
-  MoonIcon,
-  SunIcon,
   UserIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,7 +26,7 @@ function MobileNavbar() {
       <Sheet open={showMobileMenu} onOpenChange={setShowMobileMenu}>
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon">
-            <MenuIcon className="text-primary-foreground h-5 w-5" />
+            <MenuIcon aria-label="Menu Button" className="text-primary-foreground h-5 w-5" />
           </Button>
         </SheetTrigger>
         <SheetContent side="right" className="w-[300px]">
