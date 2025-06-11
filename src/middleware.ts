@@ -1,16 +1,19 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
-
-const isProtectedRoute = createRouteMatcher(['/profile(.*)', '/create-post(.*)'])
+import { clerkMiddleware, getAuth } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
 
 export default clerkMiddleware(async (auth, req) => {
-  if (isProtectedRoute(req)) await auth.protect()
-})
+  const { pathname } = req.nextUrl;
+  const authObject = await auth();
+
+  if ((pathname.startsWith('/create-post') || pathname.startsWith('/profile')) && !authObject.userId) {
+    return NextResponse.redirect('/');
+  }
+
+  return NextResponse.next();
+});
 
 export const config = {
   matcher: [
-    "/(.*)",
-    "/map(.*)",
-    "/create-post(.*)",
-    "/profile(.*)",
+    '/(.*)', // Apply middleware to all routes that need access to Clerk helpers
   ],
-}
+};
