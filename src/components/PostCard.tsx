@@ -46,17 +46,16 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
             </Link>
 
             {/* POST USER HEADER */}
-            <div className="flex-1 min-w-0">
+            <Link href={`/profile/${post.user.username}`} className="flex-1 min-w-0">
               <div className="flex items-start justify-between">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 truncate">
-                  <Link
-                    href={`/profile/${post.user.username}`}
+                  <p
                     className="font-semibold truncate"
                   >
                     {post.user.name}
-                  </Link>
+                  </p>
                   <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                    <Link href={`/profile/${post.user.username}`}>@{post.user.username}</Link>
+                    @{post.user.username}
                     <span>•</span>
                     <span>{formatDistanceToNow(new Date(post.postedAt))} ago</span>
                   </div>
@@ -65,7 +64,7 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
                   <DeleteAlertDialog isDeleting={isDeleting} onDeleteAction={handleDeletePost} />
                 )}
               </div>
-            </div>
+            </ Link>
           </div>
 
           {/* POST PET HEADER */}
@@ -82,7 +81,7 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
                   width={500}
                   height={500}
                   alt="Picture of the pet"
-                  loading="eager"
+                  priority={true}
                 />
             </div>
           )}
