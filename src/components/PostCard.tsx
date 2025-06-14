@@ -80,6 +80,7 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
                   src={post.photo}
                   width={500}
                   height={500}
+                  sizes="(max-width: 640px) 100vw, 500px"
                   alt="Picture of the pet"
                   priority={true}
                 />
