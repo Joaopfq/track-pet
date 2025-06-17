@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import { getPostsByProximity } from "@/actions/post";
 import { getDbUserId } from "@/actions/user";
 import PostsListWrapper from "@/components/PostsListWrapper";
+import FloatingPostButton from "@/components/FloatingPostButton";
 
 const PostsMapWrapper = dynamic(() => import("@/components/PostsMapWrapper"), { ssr: false });
 
@@ -17,6 +18,7 @@ export default async function Home() {
       <div className="hidden lg:block lg:col-span-4 sticky top-20">
         <PostsMapWrapper initialPosts={posts} />
       </div>
+      <FloatingPostButton />
     </div>
   );
 }

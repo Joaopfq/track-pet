@@ -4,6 +4,8 @@ import {
   HomeIcon,
   LogOutIcon,
   MapIcon,
+  MapPin,
+  MapPinX,
   MenuIcon,
   UserIcon,
 } from "lucide-react";
@@ -49,6 +51,18 @@ function MobileNavbar() {
 
             {isSignedIn ? (
               <>
+                <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
+                  <Link href={'/create-post?postType=MISSING'}>
+                    <MapPinX className="w-4 h-4" />
+                    Lost Pet
+                  </Link>
+                </Button>
+                <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
+                  <Link href={'/create-post?postType=FOUND'}>
+                    <MapPin className="w-4 h-4" />
+                    Found Pet
+                  </Link>
+                </Button>
                 <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
                   <Link href={`/profile/${
                     user?.username ?? user?.emailAddresses[0].emailAddress.split("@")[0]
