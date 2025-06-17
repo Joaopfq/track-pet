@@ -6,7 +6,11 @@ export default clerkMiddleware(async (auth, req) => {
   const authObject = await auth();
 
   if ((pathname.startsWith('/create-post') || pathname.startsWith('/profile')) && !authObject.userId) {
-    return NextResponse.redirect('/');
+    const url = process.env.URL;
+    if (!url) {
+      throw new Error('URL environment variable is not set');
+    }
+    return NextResponse.redirect(url);
   }
 
   return NextResponse.next();
