@@ -7,10 +7,14 @@ import { useRouter } from "next/navigation";
 import { PostType } from "@prisma/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { SignInButton, useAuth, useUser } from "@clerk/nextjs";
+import { CircleUserRound } from 'lucide-react';
 
 export default function FloatingPostButton() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const { isSignedIn } = useAuth();
+  const { user } = useUser();
 
   function handleSelect(type: PostType) {
     router.push(`/create-post?type=${type}`);
@@ -18,7 +22,6 @@ export default function FloatingPostButton() {
 
   return (
     <>
-      {/* Backdrop */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -51,7 +54,9 @@ export default function FloatingPostButton() {
                   transition={{ duration: 0.2 }}
                   className="flex"
                 >
-                  <Plus size={56} strokeWidth={3} />
+                  <div className="text-background">
+                    <Plus size={56} strokeWidth={3} />
+                  </div>
                 </motion.span>
               ) : (
                 <motion.span
@@ -62,7 +67,9 @@ export default function FloatingPostButton() {
                   transition={{ duration: 0.25 }}
                   className="flex"
                 >
-                  <Dog size={56} strokeWidth={3} />
+                  <div className="text-background">
+                    <Dog size={56} strokeWidth={3} />
+                  </div>
                 </motion.span>
               )}
             </AnimatePresence>
@@ -72,27 +79,43 @@ export default function FloatingPostButton() {
           align="end"
           className="w-36 bg-transparent border-transparent flex flex-col gap-2 p-2 z-50"
           sideOffset={8}
-        >
-          <div className="flex items-center justify-end">
-            <p className="font-bold mr-2">Lost</p>
-            <Button
-              variant="ghost"
-              className="w-full justify-center rounded-full p-0 bg-foreground size-10 text-primary shadow-lg hover:bg-primary/90 z-50"
-              onClick={() => handleSelect(PostType.MISSING)}
-            >
-              <MapPinX />
-            </Button>
-          </div>
-          <div className="flex items-center justify-end">
-            <p className="font-bold mr-2">Found</p>
-            <Button
-              variant="ghost"
-              className="w-full justify-center rounded-full p-0 bg-foreground size-10 text-primary shadow-lg hover:bg-primary/90 z-50"
-              onClick={() => handleSelect(PostType.FOUND)}
-            >
-              <MapPin />
-            </Button>
-          </div>
+          >
+          { isSignedIn ? (
+            <>
+              <div className="flex items-center justify-end">
+                <p className="font-bold mr-2 text-white ">Lost</p>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-center rounded-full p-0 bg-foreground size-10 text-background shadow-lg hover:bg-primary/90 z-50"
+                  onClick={() => handleSelect(PostType.MISSING)}
+                >
+                  <MapPinX />
+                </Button>
+              </div>
+              <div className="flex items-center justify-end">
+                <p className="font-bold mr-2 text-white ">Found</p>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-center rounded-full p-0 bg-foreground size-10 text-background shadow-lg hover:bg-primary/90 z-50"
+                  onClick={() => handleSelect(PostType.FOUND)}
+                >
+                  <MapPin />
+                </Button>
+              </div>            
+            </>
+          ) : (
+            <SignInButton mode="modal">
+              <div className="flex items-center justify-end">
+                <p className="font-bold mr-2 text-white ">Sign in</p>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-center rounded-full p-0 bg-foreground size-10 text-background shadow-lg hover:bg-primary/90 z-50"
+                >
+                  <CircleUserRound />
+                </Button>
+              </div>  
+            </SignInButton>
+          )}
         </PopoverContent>
       </Popover>
     </>
