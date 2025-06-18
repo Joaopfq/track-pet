@@ -18,6 +18,6 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
-    '/(.*)', // Apply middleware to all routes that need access to Clerk helpers
+    '/(.*)',
   ],
 };
