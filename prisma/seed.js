@@ -1,4 +1,4 @@
-import { PrismaClient, PostType, Species, Gender, PostStatus } from '@prisma/client';
+const { PrismaClient, PostType, Species, Gender, PostStatus } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
@@ -14,7 +14,7 @@ async function main() {
     });
   }
 
-  const posts = Array.from({ length: 30 }).map((_, i) => ({
+  const posts = Array.from({ length: 1000 }).map((_, i) => ({
     userId: user.id,
     type: i % 2 === 0 ? PostType.MISSING : PostType.FOUND,
     status: PostStatus.ACTIVE,
