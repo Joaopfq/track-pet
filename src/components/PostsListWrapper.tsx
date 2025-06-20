@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { useAppSelector } from "@/lib/hooks";
 import { getPostsByProximity } from "@/actions/post";
 import PostsList from "@/components/PostsList";
+import { LoadingSpinner } from "./LoadingSpinner";
 
 type Posts = Awaited<ReturnType<typeof getPostsByProximity>>;
 type Post = Posts[number];
@@ -144,8 +145,8 @@ export default function PostsListWrapper({
     <>
       <PostsList posts={filteredPosts} dbUserId={dbUserId} />
       {hasMore && (
-        <div ref={loader} style={{ height: 40, textAlign: "center" }}>
-          {isLoading ? "Loading more..." : ""}
+        <div ref={loader} className="flex justify-center items-center my-4">
+          {isLoading ? <LoadingSpinner /> : ""}
         </div>
       )}
     </>
