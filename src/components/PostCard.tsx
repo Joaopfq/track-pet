@@ -14,7 +14,7 @@ import Image from 'next/image'
 type Posts = Awaited<ReturnType<typeof getPostsByProximity>>;
 type Post = Posts[number];
 
-function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
+function PostCard({ post, dbUserId, priority }: { post: Post; dbUserId: string | null; priority?: boolean }) {
   
   const [seeMore, setSeeMore] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -41,7 +41,7 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
           <div className="flex space-x-3 sm:space-x-4">
             <Link href={`/profile/${post.user.username}`}>
               <Avatar className="size-8 sm:w-10 sm:h-10">
-                <AvatarImage alt="User image" src={post.user.image ?? "/avatar.png"} />
+                <AvatarImage sizes="(max-width: 640px) 100vw, 40px" alt="User image" src={post.user.image ?? "/avatar.png"} />
               </Avatar>
             </Link>
 
@@ -82,7 +82,7 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
                   height={500}
                   sizes="(max-width: 640px) 100vw, 500px"
                   alt="Picture of the pet"
-                  priority={true}
+                  priority={priority}
                 />
             </div>
           )}
