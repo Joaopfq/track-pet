@@ -27,53 +27,52 @@ export default function PostsListWrapper({
   const [hasMore, setHasMore] = useState(true);
 
   const loader = useRef<HTMLDivElement | null>(null);
-  const lastLocation = useRef<{ lat: number | null; lng: number | null }>({
+  const lastLocation = useRef<{ lat: number | null; lng: number | null; search: string }>({
     lat: null,
     lng: null,
+    search: "",
   });
 
-  // Reset when location or search changes
+  // When location or search changes, reset posts and page and fetch new
   useEffect(() => {
-    setPosts(initialPosts);
     setPage(1);
     setHasMore(true);
-    lastLocation.current = {
-      lat: location.latitude,
-      lng: location.longitude
+    setIsLoading(true);
+
+    const fetchInitialPosts = async () => {
+      let postsData: Post[];
+      if (location.latitude !== null && location.longitude !== null) {
+        postsData = await getPostsByProximity(
+          location.latitude,
+          location.longitude,
+          1,
+          PER_PAGE,
+          searchQuery
+        );
+      } else {
+        postsData = await getPostsByProximity(
+          undefined,
+          undefined,
+          1,
+          PER_PAGE,
+          searchQuery
+        );
+      }
+      setPosts(postsData);
+      setIsLoading(false);
+      setHasMore(postsData.length === PER_PAGE);
+      lastLocation.current = {
+        lat: location.latitude,
+        lng: location.longitude,
+        search: searchQuery,
+      };
     };
+    fetchInitialPosts();
   }, [
-    initialPosts,
     location.latitude,
     location.longitude,
     searchQuery,
   ]);
-
-  // When location changes from no location to provided, fetch proximity posts immediately for page 1
-  useEffect(() => {
-    if (
-      location.latitude !== null &&
-      location.longitude !== null &&
-      (lastLocation.current.lat !== location.latitude ||
-        lastLocation.current.lng !== location.longitude)
-    ) {
-      setIsLoading(true);
-      getPostsByProximity(
-        location.latitude,
-        location.longitude,
-        1,
-        PER_PAGE
-      ).then((proximityPosts) => {
-        setPosts(proximityPosts);
-        setIsLoading(false);
-        setHasMore(proximityPosts.length === PER_PAGE);
-        setPage(1);
-        lastLocation.current = {
-          lat: location.latitude,
-          lng: location.longitude
-        };
-      });
-    }
-  }, [location.latitude, location.longitude]);
 
   // Infinite scroll logic
   const fetchMorePosts = useCallback(async () => {
@@ -86,14 +85,16 @@ export default function PostsListWrapper({
         location.latitude,
         location.longitude,
         nextPage,
-        PER_PAGE
+        PER_PAGE,
+        searchQuery
       );
     } else {
       newPosts = await getPostsByProximity(
         undefined,
         undefined,
         nextPage,
-        PER_PAGE
+        PER_PAGE,
+        searchQuery
       );
     }
     setPosts((prev) => {
@@ -110,6 +111,7 @@ export default function PostsListWrapper({
     page,
     location.latitude,
     location.longitude,
+    searchQuery,
   ]);
 
   useEffect(() => {
@@ -128,22 +130,9 @@ export default function PostsListWrapper({
     };
   }, [fetchMorePosts]);
 
-  const filteredPosts = posts.filter((post) => {
-    if (!searchQuery) return true;
-    const query = searchQuery.toLowerCase();
-    return (
-      post.petName?.toLowerCase().includes(query) ||
-      post.type?.toLowerCase().includes(query) ||
-      post.species?.toLowerCase().includes(query) ||
-      post.breed?.toLowerCase().includes(query) ||
-      post.neighborhood?.toLowerCase().includes(query) ||
-      post.description?.toLowerCase().includes(query)
-    );
-  });
-
   return (
     <>
-      <PostsList posts={filteredPosts} dbUserId={dbUserId} />
+      <PostsList posts={posts} dbUserId={dbUserId} />
       {hasMore && (
         <div ref={loader} className="flex justify-center items-center my-4">
           {isLoading ? <LoadingSpinner /> : ""}

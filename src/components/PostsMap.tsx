@@ -49,7 +49,7 @@ export default function PostsMap({ posts, userLocation, loading }: PostsMapProps
   }, [userLocation]);
 
   return (
-    <div className="sticky top-20">
+    <div className="sticky top-20 rounded-xl border border-border">
       {loading && (
         <div className="absolute z-[1000] w-full h-full flex items-center justify-center bg-black bg-opacity-30 rounded-xl">
           <span className="text-white text-lg font-medium animate-pulse">
@@ -63,6 +63,7 @@ export default function PostsMap({ posts, userLocation, loading }: PostsMapProps
         center={[mapCenter.lat, mapCenter.lng]}
         zoom={15}
         style={{ height: "500px", width: "100%" }}
+        scrollWheelZoom={false}
       >
         <RecenterMap center={mapCenter} />
         <TileLayer
