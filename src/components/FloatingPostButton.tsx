@@ -40,7 +40,7 @@ export default function FloatingPostButton() {
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
-            className="sm:hidden fixed bottom-6 right-6 rounded-full p-0 bg-foreground size-16 text-primary shadow-lg hover:bg-primary/90 z-50 flex items-center justify-center"
+            className="sm:hidden fixed bottom-6 right-6 rounded-full p-0 bg-foreground size-16 text-background shadow-lg hover:bg-foreground/90 z-50 flex items-center justify-center"
             aria-label="Create post"
             style={{ transition: "box-shadow 0.2s" }}
           >
@@ -54,9 +54,7 @@ export default function FloatingPostButton() {
                   transition={{ duration: 0.2 }}
                   className="flex"
                 >
-                  <div className="text-background">
-                    <Plus size={56} strokeWidth={3} />
-                  </div>
+                  <Plus className="text-background" size={56} strokeWidth={3} />
                 </motion.span>
               ) : (
                 <motion.span
@@ -67,9 +65,7 @@ export default function FloatingPostButton() {
                   transition={{ duration: 0.25 }}
                   className="flex"
                 >
-                  <div className="text-background">
-                    <Dog size={56} strokeWidth={3} />
-                  </div>
+                  <Dog className="text-background" size={56} strokeWidth={3} />
                 </motion.span>
               )}
             </AnimatePresence>
@@ -77,7 +73,7 @@ export default function FloatingPostButton() {
         </PopoverTrigger>
         <PopoverContent
           align="end"
-          className="w-36 bg-transparent border-transparent flex flex-col gap-2 p-2 z-50"
+          className="w-36 shadow-none bg-transparent border-transparent flex flex-col gap-2 p-2 z-50"
           sideOffset={8}
           >
           { isSignedIn ? (
