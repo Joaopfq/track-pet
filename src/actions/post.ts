@@ -2,7 +2,7 @@
 
 import { getDbUserId } from "./user";
 import { prisma } from "@/lib/prisma";
-import { Gender, PostStatus, PostType, Species } from "@prisma/client";
+import { Gender, PostStatus, PostType, Prisma, Species } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redis } from "@/lib/redis";
 
@@ -59,18 +59,65 @@ export async function getPostsByProximity(
   lat?: number,
   lng?: number,
   page: number = 1,
-  perPage: number = 20
+  perPage: number = 20,
+  searchQuery?: string
 ) {
-  const cacheKey = lat !== undefined && lng !== undefined
+  // Caching only for no search
+  const cacheKey = lat !== undefined && lng !== undefined && !searchQuery
     ? `posts:proximity:${lat}:${lng}:page:${page}:perPage:${perPage}`
-    : `posts:recent:page:${page}:perPage:${perPage}`;
+    : `posts:recent:page:${page}:perPage:${perPage}${searchQuery ? `:search:${searchQuery}` : ""}`;
 
-  const cached = await redis.get(cacheKey);
-  if (typeof cached === "string") {
-    return JSON.parse(cached);
+  if (!searchQuery) {
+    const cached = await redis.get(cacheKey);
+    if (typeof cached === "string") {
+      return JSON.parse(cached);
+    }
+  }
+
+  // Build search filter: only use "contains" for string fields,
+  // and exact match (equality) for enums if query matches an enum value
+  const filters: Prisma.PostWhereInput[] = [];
+  if (searchQuery) {
+    filters.push(
+      { petName: { contains: searchQuery, mode: "insensitive" } },
+      { breed: { contains: searchQuery, mode: "insensitive" } },
+      { neighborhood: { contains: searchQuery, mode: "insensitive" } },
+      { description: { contains: searchQuery, mode: "insensitive" } }
+    );
+    // enums: only add filter if searchQuery matches an enum value
+    if (Object.values(PostType).includes(searchQuery.toUpperCase() as PostType)) {
+      filters.push({ type: searchQuery.toUpperCase() as PostType });
+    }
+    if (Object.values(Species).includes(searchQuery.toUpperCase() as Species)) {
+      filters.push({ species: searchQuery.toUpperCase() as Species });
+    }
   }
 
   let posts;
+  // If searching, ignore proximity. Just do Prisma search, order by postedAt DESC.
+  if (searchQuery && searchQuery.trim() !== "") {
+    posts = await prisma.post.findMany({
+      where: filters.length > 0 ? { OR: filters } : undefined,
+      orderBy: { postedAt: "desc" },
+      take: perPage,
+      skip: (page - 1) * perPage,
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            username: true,
+            image: true,
+            email: true,
+          },
+        },
+      },
+    });
+    // Don't cache search results
+    return posts;
+  }
+
+  // If not searching, and location is available, use raw SQL to order by proximity
   if (typeof lat === "number" && typeof lng === "number") {
     const offset = (page - 1) * perPage;
     posts = await prisma.$queryRaw<any[]>`
@@ -106,38 +153,36 @@ export async function getPostsByProximity(
         email: post.userEmail,
       }
     }));
-  } else {
-    posts = await prisma.post.findMany({
-      orderBy: {
-        postedAt: "desc",
-      },
-      take: perPage,
-      skip: (page - 1) * perPage,
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            username: true,
-            image: true,
-            email: true,
-          },
-        },
-      },
-    });
+
+    await redis.set(cacheKey, JSON.stringify(posts), { ex: 120 });
+    return posts;
   }
 
-  await redis.set(cacheKey, JSON.stringify(posts), { ex: 120 });
+  // Fallback: just order by postedAt DESC (recent posts)
+  posts = await prisma.post.findMany({
+    orderBy: { postedAt: "desc" },
+    take: perPage,
+    skip: (page - 1) * perPage,
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          image: true,
+          email: true,
+        },
+      },
+    },
+  });
 
+  await redis.set(cacheKey, JSON.stringify(posts), { ex: 120 });
   return posts;
 }
 
-/**
- * Invalidate all posts-related caches in Redis.
- */
 async function invalidatePostsCache() {
-  const keys = await redis.keys("posts:proximity:*");
-  const keysRecent = await redis.keys("posts:recent:*");
+  const keys = await redis.keys("posts:proximity*");
+  const keysRecent = await redis.keys("posts:recent*");
   const allKeys = [...keys, ...keysRecent];
   if (allKeys.length > 0) {
     await redis.del(...allKeys);
