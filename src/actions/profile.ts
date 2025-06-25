@@ -25,7 +25,6 @@ export async function getProfileByUsername(username: string) {
 
     return user;
   } catch (error) {
-    console.error("Error fetching profile:", error);
     throw new Error("Failed to fetch profile");
   }
 }
@@ -69,7 +68,6 @@ export async function getUserPosts(userId: string) {
 
     return posts;
   } catch (error) {
-    console.error("Error fetching user posts:", error);
     throw new Error("Failed to fetch user posts");
   }
 }
@@ -95,7 +93,6 @@ export async function updateProfile(formData: FormData) {
     revalidatePath("/profile");
     return { success: true, user };
   } catch (error) {
-    console.error("Error updating profile:", error);
     return { success: false, error: "Failed to update profile" };
   }
 }

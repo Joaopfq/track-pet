@@ -2,11 +2,12 @@ import dynamic from "next/dynamic";
 import { getPostsByProximity } from "@/actions/post";
 import { getDbUserId } from "@/actions/user";
 import PostsListWrapper from "@/components/PostsListWrapper";
+import FloatingPostButton from "@/components/FloatingPostButton";
 
 const PostsMapWrapper = dynamic(() => import("@/components/PostsMapWrapper"), { ssr: false });
 
 export default async function Home() {
-  const posts = await getPostsByProximity(); // SSR/default order
+  const posts = await getPostsByProximity();
   const dbUserId = await getDbUserId();
 
   return (
@@ -15,8 +16,9 @@ export default async function Home() {
         <PostsListWrapper initialPosts={posts} dbUserId={dbUserId} />
       </div>
       <div className="hidden lg:block lg:col-span-4 sticky top-20">
-        <PostsMapWrapper />
+        <PostsMapWrapper initialPosts={posts} />
       </div>
+      <FloatingPostButton />
     </div>
   );
 }

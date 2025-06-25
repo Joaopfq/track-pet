@@ -9,15 +9,16 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { DeleteAlertDialog } from "./DeleteAlertDialog";
 import ShareDropdown from "./ShareDropdown";
-import { mapEnumToString } from "@/lib/utils";
+import Image from 'next/image'
 
 type Posts = Awaited<ReturnType<typeof getPostsByProximity>>;
 type Post = Posts[number];
 
-function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
+function PostCard({ post, dbUserId, priority }: { post: Post; dbUserId: string | null; priority?: boolean }) {
   
   const [seeMore, setSeeMore] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
   const handleDeletePost = async () => {
     if (isDeleting) return;
@@ -40,22 +41,21 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
           <div className="flex space-x-3 sm:space-x-4">
             <Link href={`/profile/${post.user.username}`}>
               <Avatar className="size-8 sm:w-10 sm:h-10">
-                <AvatarImage src={post.user.image ?? "/avatar.png"} />
+                <AvatarImage sizes="(max-width: 640px) 100vw, 40px" alt="User image" src={post.user.image ?? "/avatar.png"} />
               </Avatar>
             </Link>
 
             {/* POST USER HEADER */}
-            <div className="flex-1 min-w-0">
+            <Link href={`/profile/${post.user.username}`} className="flex-1 min-w-0">
               <div className="flex items-start justify-between">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 truncate">
-                  <Link
-                    href={`/profile/${post.user.username}`}
+                  <p
                     className="font-semibold truncate"
                   >
                     {post.user.name}
-                  </Link>
+                  </p>
                   <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                    <Link href={`/profile/${post.user.username}`}>@{post.user.username}</Link>
+                    @{post.user.username}
                     <span>•</span>
                     <span>{formatDistanceToNow(new Date(post.postedAt))} ago</span>
                   </div>
@@ -64,7 +64,7 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
                   <DeleteAlertDialog isDeleting={isDeleting} onDeleteAction={handleDeletePost} />
                 )}
               </div>
-            </div>
+            </ Link>
           </div>
 
           {/* POST PET HEADER */}
@@ -75,18 +75,24 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
 
           {/* POST IMAGE */}
           {post.photo && (
-            <div className="rounded-lg overflow-hidden">
-              <img src={post.photo} alt="Pet photo" className="w-full h-auto object-cover" />
+            <div className="flex justify-center rounded-lg overflow-hidden">
+                <Image
+                  src={post.photo}
+                  width={500}
+                  height={500}
+                  sizes="(max-width: 640px) 100vw, 500px"
+                  alt="Picture of the pet"
+                  priority={priority}
+                />
             </div>
           )}
 
           {/* POST SHARE */}
           <div className="flex  justify-end items-center">
               <ShareDropdown
-                url={`${process.env.NEXT_PUBLIC_BASE_URL}/#${post.id}`}
+                url={`${baseUrl}/#${post.id}`}
                 title={`${post.id}`}
               />
-
           </div>         
 
           {/* POST CONTENT */}
@@ -124,7 +130,7 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
                   <strong>Contact: </strong>                  
                   <Link
                     href={`mailto:${post.user.email}`}
-                    className="text-blue-500 hover:underline">
+                    className="text-chart-5 hover:underline">
                     {post.user.email}     
                   </Link>                  
                 </div>
@@ -135,7 +141,7 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
           {/* POST SEE MORE */}
           <button
             onClick={() => setSeeMore(!seeMore)}
-            className="text-blue-500 hover:underline ml-1"
+            className="text-chart-5 hover:underline ml-1"
           >
             {seeMore ? "" : "See More"}
           </button>

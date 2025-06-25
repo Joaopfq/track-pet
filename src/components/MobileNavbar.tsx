@@ -1,15 +1,12 @@
 "use client";
 
 import {
-  BellIcon,
-  CircleHelpIcon,
   HomeIcon,
-  InfoIcon,
   LogOutIcon,
   MapIcon,
+  MapPin,
+  MapPinX,
   MenuIcon,
-  MoonIcon,
-  SunIcon,
   UserIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,7 +28,7 @@ function MobileNavbar() {
       <Sheet open={showMobileMenu} onOpenChange={setShowMobileMenu}>
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon">
-            <MenuIcon className="text-primary-foreground h-5 w-5" />
+            <MenuIcon aria-label="Menu Button" className="text-primary-foreground h-5 w-5" />
           </Button>
         </SheetTrigger>
         <SheetContent side="right" className="w-[300px]">
@@ -54,6 +51,18 @@ function MobileNavbar() {
 
             {isSignedIn ? (
               <>
+                <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
+                  <Link href={'/create-post?postType=MISSING'}>
+                    <MapPinX className="w-4 h-4" />
+                    Lost Pet
+                  </Link>
+                </Button>
+                <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
+                  <Link href={'/create-post?postType=FOUND'}>
+                    <MapPin className="w-4 h-4" />
+                    Found Pet
+                  </Link>
+                </Button>
                 <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
                   <Link href={`/profile/${
                     user?.username ?? user?.emailAddresses[0].emailAddress.split("@")[0]

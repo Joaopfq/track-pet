@@ -18,7 +18,7 @@ const locationSlice = createSlice({
       state.latitude = action.payload.latitude
       state.longitude = action.payload.longitude
     },
-    clearLocation: () => initialState // Reset to initial state
+    clearLocation: () => initialState
   }
 })
 

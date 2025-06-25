@@ -35,7 +35,7 @@ function Step2({ postForm, setPostForm }: { postForm: any; setPostForm: any }) {
         )}
         <DatePicker
           value={postForm.date}
-          onChangeAction={(date) => handleInputChange("date", date)} // Ensure this matches DatePicker's API
+          onChangeAction={(date) => handleInputChange("date", date)}
         />
         {errors.date && <p className="text-red-500 text-sm">{errors.date}</p>}
       </div>

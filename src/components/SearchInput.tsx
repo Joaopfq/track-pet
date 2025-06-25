@@ -12,14 +12,12 @@ export default function SearchInput() {
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Focus input when it appears
   useEffect(() => {
     if (showInput) {
       inputRef.current?.focus();
     }
   }, [showInput]);
 
-  // Handle click outside to close input
   useEffect(() => {
     if (!showInput) return;
     function handleClickOutside(event: MouseEvent) {
@@ -36,7 +34,6 @@ export default function SearchInput() {
 
   return (
     <>
-      {/* Desktop: always show input, aligned right */}
       <div className="hidden md:flex justify-end w-full max-w-xs ml-auto mr-3">
         <Input
           type="text"
@@ -47,7 +44,6 @@ export default function SearchInput() {
           aria-label="Search posts"
         />
       </div>
-      {/* Mobile: icon aligned right, input expands from right */}
       <div className="md:hidden relative w-full mr-1" ref={containerRef}>
         {!showInput ? (
           <div className="flex justify-end w-full">

@@ -32,7 +32,7 @@ export async function syncUser() {
     return dbUser;
 
   } catch (error) {
-    console.log("Error syncing user:", error);
+    throw new Error("Failed to sync user");
   }
 }
 
@@ -57,7 +57,7 @@ export async function getUserByClerkId(clerkId: string) {
 
     return user;
   } catch (error) {
-    console.log("Error getting user by clerkId:", error);
+    throw new Error("Failed to fetch user by Clerk ID");
   }
 }
 

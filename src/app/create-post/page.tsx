@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { Gender, PostType, Species } from '@prisma/client';
 import { useRouter, useSearchParams } from "next/navigation";
 import { mapStringToEnum } from '@/lib/utils';
@@ -30,7 +30,8 @@ async function fetchNeighborhood(lat: number, lng: number): Promise<string | nul
     const data = await response.json();
     return data.neighborhood;
   } catch (error) {
-    return null; 
+    toast.error("Failed to fetch neighborhood data");
+    throw new Error("Failed to fetch neighborhood data");
   }
 }
 
@@ -122,7 +123,7 @@ function CreatePost() {
         updatedPostForm.neighborhood
       );
 
-      if (result?.sucess) {
+      if (result?.success) {
         setPostForm({
           postType: "MISSING",
           petName: "",
@@ -200,4 +201,10 @@ function CreatePost() {
   );
 }
 
-export default CreatePost;
+export default function CreatePostPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CreatePost />
+    </Suspense>
+  );
+}

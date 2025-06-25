@@ -7,8 +7,8 @@ type Post = Posts[number];
 export default function PostsList({ posts, dbUserId }: { posts: Post[]; dbUserId: string | null }) {
   return (
     <div className="space-y-6">
-      {posts.map((post) => (
-        <PostCard key={post.id} post={post} dbUserId={dbUserId} />
+      {posts.map((post, idx) => (
+        <PostCard key={post.id} post={post} dbUserId={dbUserId} priority={idx === 0} />
       ))}
     </div>
   );

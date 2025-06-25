@@ -36,9 +36,9 @@ export function DeleteAlertDialog({
           className="text-muted-foreground hover:text-red-500 -mr-2"
         >
           {isDeleting ? (
-            <Loader2Icon className="size-4 animate-spin" />
+            <Loader2Icon aria-label="Load Icon" className="size-4 animate-spin" />
           ) : (
-            <Trash2Icon className="size-4" />
+            <Trash2Icon aria-label="Trash Icon" className="size-4" />
           )}
         </Button>
       </AlertDialogTrigger>
