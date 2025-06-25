@@ -24,6 +24,7 @@ const roboto = Roboto({
 export const metadata: Metadata = {
   title: "Track Pet",
   description: "Let us help you track your pet",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -34,6 +35,15 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
+        <head>
+          <link rel="manifest" href="/manifest.json" />
+          <meta name="theme-color" content="#fff" media="(prefers-color-scheme: light)" />
+          <meta name="theme-color" content="#1f2937" media="(prefers-color-scheme: dark)" />
+          <link rel="icon" href="/paw.png" />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+          <link rel="apple-touch-icon" href="/paw.png" />
+        </head>
         <body
           className={`${poppins.variable} ${roboto.variable} antialiased`}
         >
