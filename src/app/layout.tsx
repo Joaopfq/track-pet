@@ -23,7 +23,8 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   title: "Track Pet",
-  description: "Let us help you track your pet",
+  description: "Track Pet is a web application created to help pet owners to find their lost pets and to help people to find lost pets.",
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
@@ -34,6 +35,11 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
+        <head>
+          <link rel="manifest" href="/manifest.json" />
+          <meta name="theme-color" content="#1976d2" />
+          <link rel="apple-touch-icon" href="/icons/paw-192.png" />
+        </head>
         <body
           className={`${poppins.variable} ${roboto.variable} antialiased`}
         >
@@ -47,18 +53,18 @@ export default function RootLayout({
               <div className="min-h-screen">
                 <Navbar />
                 <main className="py-8">
-                    <div className="max-w-7xl mx-auto px-4">
-                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                        <div className="hidden lg:block lg:col-span-3">
-                          <Sidebar />
-                        </div>
-                          <div className="lg:col-span-9">{children}</div>
+                  <div className="max-w-7xl mx-auto px-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                      <div className="hidden lg:block lg:col-span-3">
+                        <Sidebar />
                       </div>
+                      <div className="lg:col-span-9">{children}</div>
                     </div>
-                  </main>
+                  </div>
+                </main>
               </div>
               <Toaster />
-            </StoreProvider>              
+            </StoreProvider>
           </ThemeProvider>
         </body>
       </html>
