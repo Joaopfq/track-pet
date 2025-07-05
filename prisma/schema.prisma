@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -23,6 +20,8 @@ model User {
   image           String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+  locationLat Float?
+  locationLng Float?
 
   posts           Post[] 
   comments        Comment[] 
@@ -31,6 +30,8 @@ model User {
   
   notifications   Notification[] @relation("UserNotifications")
   createdNotifications Notification[] @relation("NotificationsCreator")
+
+  pushSubscriptions PushSubscription[]
 }
 
 model Post {
@@ -91,7 +92,6 @@ model Message {
 
 model Notification {
   id        String   @id @default(cuid())
-  type      NotificationType
   content   String
   createdAt DateTime @default(now())
   read      Boolean  @default(false)
@@ -103,6 +103,20 @@ model Notification {
   // Creator (optional)
   creator   User?    @relation("NotificationsCreator", fields: [creatorId], references: [id])
   creatorId String?
+}
+
+model PushSubscription {
+  id           String   @id @default(cuid())
+  endpoint     String   @unique
+  p256dh       String
+  auth         String
+  expiration   DateTime?
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 enum PostType {
@@ -125,10 +139,4 @@ enum Gender {
   MALE
   FEMALE
   UNKNOWN
-}
-
-enum NotificationType {
-  MESSAGE
-  STATUS_UPDATE
-  NEW_COMMENT
 }

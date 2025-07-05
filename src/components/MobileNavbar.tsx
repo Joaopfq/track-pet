@@ -36,13 +36,21 @@ function MobileNavbar() {
             <SheetTitle className="">Menu</SheetTitle>
           </SheetHeader>
           <nav className="flex flex-col space-y-4 mt-6">
-            <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
+            <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild 
+            onClick={() => {
+              setShowMobileMenu(false)
+            }}
+            >
               <Link href="/">
                 <HomeIcon className="w-4 h-4" />
                 Home
               </Link>
             </Button>
-            <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
+            <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild
+              onClick={() => {
+                setShowMobileMenu(false)
+              }}
+            >
               <Link href="/map">
                 <MapIcon className="w-4 h-4" />
                 Pet Map
@@ -51,19 +59,31 @@ function MobileNavbar() {
 
             {isSignedIn ? (
               <>
-                <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
+                <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild
+                  onClick={() => {
+                    setShowMobileMenu(false)
+                  }}
+                >
                   <Link href={'/create-post?postType=MISSING'}>
                     <MapPinX className="w-4 h-4" />
                     Lost Pet
                   </Link>
                 </Button>
-                <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
+                <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild
+                  onClick={() => {
+                    setShowMobileMenu(false)
+                  }}
+                >                  
                   <Link href={'/create-post?postType=FOUND'}>
                     <MapPin className="w-4 h-4" />
                     Found Pet
                   </Link>
                 </Button>
-                <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
+                <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild
+                  onClick={() => {
+                    setShowMobileMenu(false)
+                  }}
+                >
                   <Link href={`/profile/${
                     user?.username ?? user?.emailAddresses[0].emailAddress.split("@")[0]
                   }`}>
@@ -72,7 +92,11 @@ function MobileNavbar() {
                   </Link>
                 </Button>
                 <SignOutButton>
-                  <Button variant="ghost" className="flex items-center gap-3 justify-start w-full">
+                  <Button variant="outline" className="w-full"
+                    onClick={() => {
+                      setShowMobileMenu(false)
+                    }}
+                  >
                     <LogOutIcon className="w-4 h-4" />
                     Logout
                   </Button>
@@ -80,7 +104,11 @@ function MobileNavbar() {
               </>
             ) : (
               <SignInButton mode="modal">
-                <Button variant="default" className="w-full">
+                <Button variant='outline' className="w-full"
+                  onClick={() => {
+                    setShowMobileMenu(false)
+                  }}
+                >
                   Sign In
                 </Button>
               </SignInButton>
