@@ -7,7 +7,7 @@ import { getDbUserId } from './user'
 const prisma = new PrismaClient()
 
 webpush.setVapidDetails(
-  '<mailto:jpfq.dev@gmail.com>',
+  'mailto:jpfq.dev@gmail.com',
   process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
   process.env.VAPID_PRIVATE_KEY!
 )
@@ -81,7 +81,7 @@ export async function sendNotification(message: string) {
         JSON.stringify({
           title: 'Track Pet Notification',
           body: message,
-          icon: '/icon.png',
+          icon: '/icons/paw-192.png',
         })
       )
       successCount++
