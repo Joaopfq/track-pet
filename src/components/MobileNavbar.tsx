@@ -15,6 +15,7 @@ import { useState } from "react";
 import { useAuth, SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import ModeToggle from "./ModeToggle";
+import PushNotificationManager from "./PushNotificationManager";
 
 function MobileNavbar() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -79,6 +80,10 @@ function MobileNavbar() {
                     Found Pet
                   </Link>
                 </Button>
+                  
+                
+                <PushNotificationManager />
+
                 <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild
                   onClick={() => {
                     setShowMobileMenu(false)

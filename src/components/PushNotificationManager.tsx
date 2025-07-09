@@ -1,26 +1,17 @@
-import { useEffect, useState } from "react"
-import { subscribeUser, unsubscribeUser, sendNotification } from '@/actions/notification'
-
-function urlBase64ToUint8Array(base64String: string) {
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+'use client'
  
-  const rawData = window.atob(base64)
-  const outputArray = new Uint8Array(rawData.length)
- 
-  for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i)
-  }
-  return outputArray
-}
+import { useState, useEffect } from 'react'
+import { subscribeUser, unsubscribeUser, sendNotification } from '../actions/notification'
+import { BellOff, BellRing } from 'lucide-react'
+import { Button } from './ui/button'
+import { urlBase64ToUint8Array } from '@/lib/utils'
 
-
-export function PushNotificationManager() {
+export default function PushNotificationManager() {
   const [isSupported, setIsSupported] = useState(false)
   const [subscription, setSubscription] = useState<PushSubscription | null>(
     null
   )
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState('TESTE NOTIFICATION')
  
   useEffect(() => {
     if ('serviceWorker' in navigator && 'PushManager' in window) {
@@ -65,28 +56,29 @@ export function PushNotificationManager() {
   }
  
   if (!isSupported) {
-    return <p>Push notifications are not supported in this browser.</p>
+    return <></>
   }
  
   return (
     <div>
-      <h3>Push Notifications</h3>
       {subscription ? (
         <>
-          <p>You are subscribed to push notifications.</p>
-          <button onClick={unsubscribeFromPush}>Unsubscribe</button>
-          <input
-            type="text"
-            placeholder="Enter notification message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
-          <button onClick={sendTestNotification}>Send Test</button>
+          <Button variant="ghost" className="flex items-center gap-3 justify-start cursor-pointer" asChild onClick={unsubscribeFromPush} >
+            <span>
+              <BellRing className="w-4 h-4" />
+              Turn Off Notifications
+            </span>
+          </Button>
+          <Button onClick={sendTestNotification}>Send Test</Button>
         </>
       ) : (
         <>
-          <p>You are not subscribed to push notifications.</p>
-          <button onClick={subscribeToPush}>Subscribe</button>
+          <Button variant="ghost" className="flex items-center gap-3 justify-start cursor-pointer" asChild onClick={subscribeToPush} >
+            <span>
+              <BellOff className="w-4 h-4" />
+              Turn On Notifications
+            </span>
+          </Button>
         </>
       )}
     </div>
