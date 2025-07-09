@@ -8,6 +8,8 @@ import { ThemeProvider } from "next-themes";
 import Sidebar from "@/components/Sidebar";
 import { Toaster } from "react-hot-toast";
 import StoreProvider from '../app/StoreProvider'
+import Pwa from "@/components/PwaRegister";
+import Head from 'next/head';
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -66,6 +68,7 @@ export default function RootLayout({
               <Toaster />
             </StoreProvider>
           </ThemeProvider>
+          <Pwa />
         </body>
       </html>
     </ClerkProvider>

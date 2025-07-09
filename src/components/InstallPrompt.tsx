@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { PushNotificationManager } from "./PushNotificationManager"
 
 function InstallPrompt() {
   const [isIOS, setIsIOS] = useState(false)
@@ -23,7 +22,7 @@ function InstallPrompt() {
       <button>Add to Home Screen</button>
       {isIOS && (
         <p>
-          To install Track Pet on your iOS device, tap the share button
+          To install this app on your iOS device, tap the share button
           <span role="img" aria-label="share icon">
             {' '}
             ⎋{' '}
@@ -38,12 +37,5 @@ function InstallPrompt() {
     </div>
   )
 }
- 
-export default function Page() {
-  return (
-    <div>
-      <PushNotificationManager />
-      <InstallPrompt />
-    </div>
-  )
-}
+
+export default InstallPrompt
