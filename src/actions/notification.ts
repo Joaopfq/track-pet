@@ -61,7 +61,7 @@ export async function sendNotification(message: string) {
   if (!userId) throw new Error('User not authenticated')
 
   const subscriptions = await prisma.pushSubscription.findMany({ where: { userId } })
-  if (!subscriptions.length) {
+  if (!subscriptions || !subscriptions.length) {
     throw new Error('No push subscription found for user')
   }
 
