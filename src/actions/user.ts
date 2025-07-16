@@ -72,3 +72,23 @@ export async function getDbUserId(){
 
   return user.id
 }
+
+export async function saveUserLocation(lat: number, lng: number) {
+  const { userId: clerkId } = await auth();
+
+  if (!clerkId) throw new Error("User not authenticated");
+
+  const user = await getUserByClerkId(clerkId);
+
+  if (!user) throw new Error("User not found");
+
+  return await prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      locationLat: lat,
+      locationLng: lng,
+    },
+  });
+}
