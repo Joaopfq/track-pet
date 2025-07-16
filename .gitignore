@@ -39,3 +39,8 @@ next-env.d.ts
 #vscode
 .vscode
 
+# Ignore generated workers
+/public/sw.js
+/public/workbox-*.js
+/public/worker-*.js
+
