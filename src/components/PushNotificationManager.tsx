@@ -11,7 +11,6 @@ export default function PushNotificationManager() {
   const [subscription, setSubscription] = useState<PushSubscription | null>(
     null
   )
-  const [message, setMessage] = useState('TESTE NOTIFICATION')
  
   useEffect(() => {
     if ('serviceWorker' in navigator && 'PushManager' in window) {
@@ -48,13 +47,6 @@ export default function PushNotificationManager() {
     await unsubscribeUser()
   }
  
-  async function sendTestNotification() {
-    if (subscription) {
-      await sendNotification(message)
-      setMessage('')
-    }
-  }
- 
   if (!isSupported) {
     return <></>
   }
@@ -66,17 +58,16 @@ export default function PushNotificationManager() {
           <Button variant="ghost" className="flex items-center gap-3 justify-start cursor-pointer" asChild onClick={unsubscribeFromPush} >
             <span>
               <BellRing className="w-4 h-4" />
-              Turn Off Notifications
+              Notifications
             </span>
           </Button>
-          <Button onClick={sendTestNotification}>Send Test</Button>
         </>
       ) : (
         <>
           <Button variant="ghost" className="flex items-center gap-3 justify-start cursor-pointer" asChild onClick={subscribeToPush} >
             <span>
               <BellOff className="w-4 h-4" />
-              Turn On Notifications
+              Notifications
             </span>
           </Button>
         </>
