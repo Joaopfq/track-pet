@@ -1,7 +1,7 @@
 'use server'
 
 import { PrismaClient } from '@prisma/client'
-import webpush, { PushSubscription as WebPushSubscription } from 'web-push'
+import webpush from 'web-push'
 import { getDbUserId } from './user'
 
 const prisma = new PrismaClient()
@@ -56,17 +56,14 @@ export async function unsubscribeUser() {
 }
 
 
-export async function sendNotification(message: string) {
-  const userId = await getDbUserId()
-  if (!userId) throw new Error('User not authenticated')
-
-  const subscriptions = await prisma.pushSubscription.findMany({ where: { userId } })
-  if (!subscriptions || !subscriptions.length) {
-    throw new Error('No push subscription found for user')
+export async function sendNotification(userId: string, message: string) {
+  const subscriptions = await prisma.pushSubscription.findMany({ where: { userId } });
+  if (!subscriptions || subscriptions.length === 0) {
+    return { success: false, sent: 0, failed: 0 }; // User has not allowed notifications
   }
 
-  let successCount = 0
-  let errorCount = 0
+  let successCount = 0;
+  let errorCount = 0;
 
   for (const sub of subscriptions) {
     try {
@@ -83,20 +80,20 @@ export async function sendNotification(message: string) {
           body: message,
           icon: '/icons/paw-192.png',
         })
-      )
-      successCount++
+      );
+      successCount++;
     } catch (err) {
       const statusCode =
         typeof err === 'object' &&
         err !== null &&
         'statusCode' in err
           ? (err as any).statusCode
-          : undefined
+          : undefined;
       if (statusCode === 410 || statusCode === 404) {
-        await prisma.pushSubscription.delete({ where: { endpoint: sub.endpoint } })
+        await prisma.pushSubscription.delete({ where: { endpoint: sub.endpoint } });
       }
-      errorCount++
-      console.error('Push error:', err)
+      errorCount++;
+      console.error('Push error:', err);
     }
   }
 
@@ -106,7 +103,7 @@ export async function sendNotification(message: string) {
       content: message,
       read: false,
     },
-  })
+  });
 
-  return { success: true, sent: successCount, failed: errorCount }
+  return { success: true, sent: successCount, failed: errorCount };
 }

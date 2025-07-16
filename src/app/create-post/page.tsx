@@ -141,7 +141,7 @@ function CreatePost() {
           },
           neighborhood: "",
         });
-
+        router.push("/");
         toast.success("Post created successfully");
       }
     } catch (error) {
@@ -185,7 +185,6 @@ function CreatePost() {
           </div>
         )}
         {step === 4 && (
-        <Link href="/">
           <Button
             className='w-32 bg-white text-black hover:bg-white/80 border border-black'
             variant="outline"
@@ -194,7 +193,6 @@ function CreatePost() {
           >
             Post
           </Button>
-        </Link>
         )}
       </CardFooter>
     </Card>
