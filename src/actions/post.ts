@@ -5,6 +5,49 @@ import { prisma } from "@/lib/prisma";
 import { Gender, PostStatus, PostType, Prisma, Species } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redis } from "@/lib/redis";
+import geolib from 'geolib';
+import { sendNotification } from '../actions/notification'
+
+export async function notifyNearbyUsers(
+  postLat: number,
+  postLng: number,
+  message: string,
+  radiusMeters = 5000
+) {
+  // Find users who have location and at least one push subscription
+  const usersWithSubs = await prisma.user.findMany({
+    where: {
+      locationLat: { not: null },
+      locationLng: { not: null },
+      pushSubscriptions: {
+        some: {}, // at least one push subscription
+      },
+    },
+    include: { pushSubscriptions: true },
+  });
+
+  // Filter by proximity
+  const nearbyUsers = usersWithSubs
+  .filter(user => user.locationLat !== null && user.locationLng !== null)
+  .filter(user =>
+    geolib.getDistance(
+      { latitude: postLat, longitude: postLng },
+      { latitude: user.locationLat as number, longitude: user.locationLng as number }
+    ) < radiusMeters
+  );
+
+  // Send notifications to nearby users who allowed it
+  let sent = 0;
+  let failed = 0;
+
+  for (const user of nearbyUsers) {
+    const result = await sendNotification(user.id, message);
+    sent += result.sent;
+    failed += result.failed;
+  }
+
+  return { success: true, sent, failed };
+}
 
 export async function createPost(
   type: PostType,
@@ -47,7 +90,7 @@ export async function createPost(
     });
 
     await invalidatePostsCache();
-
+    await notifyNearbyUsers(locationLat, locationLng, `Nearby Pet ${PostType}, help it find its way home!`);
     revalidatePath("/");
     return { success: true, post };
   } catch (error) {
