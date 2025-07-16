@@ -5,6 +5,7 @@ import { useAppSelector } from "@/lib/hooks";
 import { getPostsByProximity } from "@/actions/post";
 import PostsList from "@/components/PostsList";
 import { LoadingSpinner } from "./LoadingSpinner";
+import { saveUserLocation } from "@/actions/user";
 
 type Posts = Awaited<ReturnType<typeof getPostsByProximity>>;
 type Post = Posts[number];
@@ -49,6 +50,8 @@ export default function PostsListWrapper({
           PER_PAGE,
           searchQuery
         );
+        saveUserLocation(location.latitude, location.longitude)
+          .catch((error) => console.error("Failed to save user location:", error));
       } else {
         postsData = await getPostsByProximity(
           undefined,
