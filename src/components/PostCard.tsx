@@ -4,7 +4,7 @@ import { deletePost, getPostsByProximity } from "@/actions/post";
 import { Card, CardContent} from "./ui/card";
 import Link from "next/link";
 import { Avatar, AvatarImage } from "./ui/avatar";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceStrict } from "date-fns";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { DeleteAlertDialog } from "./DeleteAlertDialog";
@@ -46,25 +46,25 @@ function PostCard({ post, dbUserId, priority }: { post: Post; dbUserId: string |
             </Link>
 
             {/* POST USER HEADER */}
-            <Link href={`/profile/${post.user.username}`} className="flex-1 min-w-0">
-              <div className="flex items-start justify-between">
+              <div className="flex items-start w-full justify-between">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 truncate">
-                  <p
-                    className="font-semibold truncate"
-                  >
-                    {post.user.name}
-                  </p>
-                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                    @{post.user.username}
-                    <span>•</span>
-                    <span>{formatDistanceToNow(new Date(post.postedAt))} ago</span>
-                  </div>
+                  <Link href={`/profile/${post.user.username}`} className="flex min-w-0">
+                    <p
+                      className="font-semibold truncate"
+                    >
+                      {post.user.name}
+                    </p>
+                  </ Link>
+                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                      @{post.user.username}
+                      <span className="ml-2">•</span>
+                      <span>{formatDistanceStrict(new Date(post.postedAt), new Date())} ago</span>
+                    </div>
                 </div>
                 {dbUserId === post.user.id && (
                   <DeleteAlertDialog isDeleting={isDeleting} onDeleteAction={handleDeletePost} />
                 )}
               </div>
-            </ Link>
           </div>
 
           {/* POST PET HEADER */}
