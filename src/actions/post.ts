@@ -25,7 +25,7 @@ export async function notifyNearbyUsers(
     },
     include: { pushSubscriptions: true },
   });
-
+ 
   // Filter by proximity
   const nearbyUsers = usersWithSubs
   .filter(user => user.locationLat !== null && user.locationLng !== null)
@@ -89,8 +89,8 @@ export async function createPost(
       },
     });
 
-    await invalidatePostsCache();
     await notifyNearbyUsers(locationLat, locationLng, `Nearby Pet ${PostType}, help it find its way home!`);
+    await invalidatePostsCache();
     revalidatePath("/");
     return { success: true, post };
   } catch (error) {
