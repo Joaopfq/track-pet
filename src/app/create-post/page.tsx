@@ -141,8 +141,8 @@ function CreatePost() {
           },
           neighborhood: "",
         });
-        router.push("/");
         toast.success("Post created successfully");
+        router.push("/");
       }
     } catch (error) {
       if (error instanceof z.ZodError) {

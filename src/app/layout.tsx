@@ -27,6 +27,10 @@ export const metadata: Metadata = {
   title: "Track Pet",
   description: "Track Pet is a web application created to help pet owners to find their lost pets and to help people to find lost pets.",
   manifest: '/manifest.json',
+  icons: {
+    icon: '/icons/paw-512-white.png',
+    apple: '/icons/paw-512-white.png',
+  },
 };
 
 export default function RootLayout({
