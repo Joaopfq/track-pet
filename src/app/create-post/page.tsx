@@ -14,8 +14,8 @@ import Step2 from '@/components/formSteps/Step2';
 import Step1 from '@/components/formSteps/Step1';
 import { z } from 'zod';
 import { combinedSchema } from '@/lib/validations/postSchemas';
-import Link from 'next/link';
 import { useAuth } from '@clerk/nextjs';
+import { set } from 'date-fns';
 
 async function fetchNeighborhood(lat: number, lng: number): Promise<string | null> {
   const url = `/api/leaflet?lat=${lat}&lon=${lng}`;
@@ -38,6 +38,7 @@ async function fetchNeighborhood(lat: number, lng: number): Promise<string | nul
 function CreatePost() {
   const { isSignedIn } = useAuth();
   const router = useRouter();
+  const [loading, setLoading] = useState(false); 
 
   useEffect(() => {
     if (!isSignedIn) {
@@ -90,6 +91,7 @@ function CreatePost() {
   postForm.postType = postType as PostType;
 
   const handleSubmit = async () => {
+    setLoading(true);
     try {
       combinedSchema.parse(postForm);
 
@@ -151,6 +153,7 @@ function CreatePost() {
         toast.error("Failed to create post");
       }
     }
+    setLoading(false);
   };
 
   return (
@@ -185,14 +188,20 @@ function CreatePost() {
           </div>
         )}
         {step === 4 && (
-          <Button
-            className='w-32 bg-white text-black hover:bg-white/80 border border-black'
-            variant="outline"
-            type="submit"
-            onClick={handleSubmit}
-          >
-            Post
-          </Button>
+          loading ? (
+            <Button className='w-32 bg-white text-black hover:bg-white/80 border border-black' disabled>
+              Posting...
+            </Button>
+          ) : (            
+            <Button
+              className='w-32 bg-white text-black hover:bg-white/80 border border-black'
+              variant="outline"
+              type="submit"
+              onClick={handleSubmit}
+            >
+              Post
+            </Button>
+          )
         )}
       </CardFooter>
     </Card>

@@ -89,7 +89,7 @@ export async function createPost(
       },
     });
 
-    await notifyNearbyUsers(locationLat, locationLng, `Nearby Pet ${PostType}, help it find its way home!`);
+    //await notifyNearbyUsers(locationLat, locationLng, `Nearby Pet ${PostType}, help it find its way home!`);
     await invalidatePostsCache();
     revalidatePath("/");
     return { success: true, post };
