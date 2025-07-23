@@ -6,6 +6,8 @@ import L from "leaflet";
 import { getPostsByProximity } from "@/actions/post";
 import Image from 'next/image'
 import "leaflet/dist/leaflet.css";
+import { Button } from "./ui/button";
+import Link from "next/link";
 
 type Posts = Awaited<ReturnType<typeof getPostsByProximity>>;
 type Post = Posts[number];
@@ -81,7 +83,7 @@ export default function PostsMap({ posts, userLocation, loading }: PostsMapProps
             >
               <Popup>
                 {post.photo && (
-                  <>
+                  <a href={`#${post.id}`}>
                     <Image
                       src={post.photo}
                       width={100}
@@ -89,7 +91,7 @@ export default function PostsMap({ posts, userLocation, loading }: PostsMapProps
                       alt="Post popup image"
                     />
                     <br />
-                  </>
+                  </a>
                 )}
                 {post.type && (
                   <>
